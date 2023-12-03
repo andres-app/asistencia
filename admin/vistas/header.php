@@ -47,7 +47,9 @@ if (strlen(session_id()) < 1)
       <!-- Logo -->
       <a href="escritorio.php" class="logo">
         <!-- mini logo for sidebar mini 50x50 pixels -->
-        <span class="logo-mini"><b>SA</b> D</span>
+        <span class="logo-mini">
+        <i class="fa fa-clock-o"></i> <!-- Icono de reloj -->
+        </span>
         <!-- logo for regular state and mobile devices -->
         <span class="logo-lg">
           <i class="fa fa-clock-o"></i> <!-- Icono de reloj -->
@@ -160,7 +162,7 @@ if (strlen(session_id()) < 1)
                 </span>
               </a>
               <ul class="treeview-menu">
-                <li><a href="asistencia.php"><i class="fa fa-circle-o"></i> Asistencia</a></li>
+                <li><a href="asistencia.php"><i class="fa fa-circle-o"></i>Lista Asistencia</a></li>
                 <li><a href="rptasistencia.php"><i class="fa fa-circle-o"></i> Reportes</a></li>
 
               </ul>

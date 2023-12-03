@@ -35,17 +35,6 @@ require 'header.php';
       <th>Asistencia</th>
       <th>Fecha</th>
     </thead>
-    <tbody>
-    </tbody>
-    <tfoot>
-      <th>Opciones</th>
-      <th>Código</th>
-      <th>Nombres</th>
-      <th>Área</th>
-      <th>Fecha Hora</th>
-      <th>Asistencia</th>
-      <th>Fecha</th>
-    </tfoot>   
   </table>
 </div>
 

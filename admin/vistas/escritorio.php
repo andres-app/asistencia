@@ -132,22 +132,8 @@ if (!isset($_SESSION['nombre'])) {
             <?php } ?>
             <!--fin centro-->
           </div>
-          <div class="box box-danger">
-            <div class="box-header with-border">
-              <h3 class="box-title">Donut Chart</h3>
-              <div class="box-tools pull-right">
-                <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i>
-                </button>
-                <button type="button" class="btn btn-box-tool" data-widget="remove"><i class="fa fa-times"></i></button>
-              </div>
-            </div>
-            <div class="box-body">
-              <canvas id="pieChart" style="height: 335px; width: 670px;" height="670" width="1340"></canvas>
-            </div>
-          </div>
         </div>
-      </div>
-      <!-- /.box -->
+        <!-- /.box -->
 
     </section>
     <!-- /.content -->

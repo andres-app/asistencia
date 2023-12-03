@@ -25,10 +25,8 @@ function listar(){
 		"aProcessing": true,//activamos el procedimiento del datatable
 		"aServerSide": true,//paginacion y filrado realizados por el server
 		dom: 'Bfrtip',//definimos los elementos del control de la tabla
-		buttons: [
-                  'copyHtml5',
+		buttons: [ 
                   'excelHtml5',
-                  'csvHtml5',
                   'pdf'
 		],
 		"ajax":
@@ -50,10 +48,8 @@ function listaru(){
 		"aProcessing": true,//activamos el procedimiento del datatable
 		"aServerSide": true,//paginacion y filrado realizados por el server
 		dom: 'Bfrtip',//definimos los elementos del control de la tabla
-		buttons: [
-                  'copyHtml5',
-                  'excelHtml5',
-                  'csvHtml5',
+		buttons: [                
+                  'excelHtml5',              
                   'pdf'
 		],
 		"ajax":
@@ -83,9 +79,7 @@ var  fecha_inicio = $("#fecha_inicio").val();
 		"aServerSide": true,//paginacion y filrado realizados por el server
 		dom: 'Bfrtip',//definimos los elementos del control de la tabla
 		buttons: [
-                  'copyHtml5',
                   'excelHtml5',
-                  'csvHtml5',
                   'pdf'
 		],
 		"ajax":
@@ -112,9 +106,7 @@ var  fecha_inicio = $("#fecha_inicio").val();
 		"aServerSide": true,//paginacion y filrado realizados por el server
 		dom: 'Bfrtip',//definimos los elementos del control de la tabla
 		buttons: [
-                  'copyHtml5',
                   'excelHtml5',
-                  'csvHtml5',
                   'pdf'
 		],
 		"ajax":

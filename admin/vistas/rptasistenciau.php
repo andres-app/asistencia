@@ -44,15 +44,6 @@ require 'header.php';
       <th>Fecha/Hora</th>
       <th>Código</th>
     </thead>
-    <tbody> 
-    </tbody>
-    <tfoot>
-      <th>Fecha</th>
-      <th>Nombres</th>
-      <th>Asistencia</th>
-      <th>Fecha/Hora</th>
-      <th>Código</th>
-    </tfoot>   
   </table>
 </div>
 

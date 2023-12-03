@@ -49,7 +49,9 @@ if (strlen(session_id())<1)
     <!-- Logo -->
     <a href="escritorio.php" class="logo">
       <!-- mini logo for sidebar mini 50x50 pixels -->
-      <span class="logo-mini"><b>CC</b> A</span>
+      <span class="logo-mini">
+      <i class="fa fa-clock-o"></i> <!-- Icono de reloj -->
+      </span>
       <!-- logo for regular state and mobile devices -->
       <span class="logo-lg"><b>CC</b> ADMIN</span>
     </a>
