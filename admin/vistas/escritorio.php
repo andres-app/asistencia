@@ -13,7 +13,7 @@ if (!isset($_SESSION['nombre'])) {
   $rsptan = $usuario->cantidad_usuario();
   $reg = $rsptan->fetch_object();
   $reg->nombre;
-?>
+  ?>
   <div class="content-wrapper">
     <!-- Main content -->
     <section class="content">
@@ -25,7 +25,7 @@ if (!isset($_SESSION['nombre'])) {
             <div class="panel-body">
 
               <?php if ($_SESSION['tipousuario'] == 'Administrador') {
-              ?>
+                ?>
                 <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12">
                   <div class="small-box bg-yellow">
                     <div class="inner">
@@ -43,7 +43,7 @@ if (!isset($_SESSION['nombre'])) {
                 </div>
               <?php } ?>
               <?php if ($_SESSION['tipousuario'] != 'Administrador') {
-              ?>
+                ?>
                 <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12">
                   <div class="small-box bg-yellow">
 
@@ -69,14 +69,16 @@ if (!isset($_SESSION['nombre'])) {
 
 
               <?php if ($_SESSION['tipousuario'] == 'Administrador') {
-              ?>
+                ?>
                 <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12">
                   <div class="small-box bg-yellow">
                     <div class="inner">
                       <h4 style="font-size: 20px;">
                         <strong>Empleados: </strong>
                       </h4>
-                      <p>Total <?php echo $reg->nombre; ?></p>
+                      <p>Total
+                        <?php echo $reg->nombre; ?>
+                      </p>
                     </div>
                     <div class="icon">
                       <i class="fa fa-users" aria-hidden="true"></i>
@@ -88,70 +90,64 @@ if (!isset($_SESSION['nombre'])) {
 
 
               <?php if ($_SESSION['tipousuario'] == 'Administrador') {
-              ?>
+                ?>
                 <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12">
                   <div class="small-box bg-yellow">
-
-                    <a href="rptasistencia.php" class="small-box-footer">
-                      <div class="inner">
-                        <h5 style="font-size: 20px;">
-                          <strong>Reporte de asistencias </strong>
-                        </h5>
-                        <p>Módulo</p>
-                      </div>
-                      <div class="icon">
-                        <i class="fa fa-list" aria-hidden="true"></i>
-                      </div>&nbsp;
-                      <div class="small-box-footer">
-                        <i class="fa"></i>
-                      </div>
-
-                    </a>
+                    <div class="inner">
+                      <h4 style="font-size: 20px;">
+                        <strong>Reporte de asistencias </strong>
+                      </h4>
+                      <p>Módulo</p>
+                    </div>
+                    <div class="icon">
+                      <i class="fa fa-list" aria-hidden="true"></i>
+                    </div>
+                    <a href="rptasistencia.php" class="small-box-footer">Ingresar</a>
                   </div>
                 </div>
-              <?php } ?>
-              <?php if ($_SESSION['tipousuario'] != 'Administrador') {
+              </div>
+            <?php } ?>
+            <?php if ($_SESSION['tipousuario'] != 'Administrador') {
               ?>
-                <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12">
-                  <div class="small-box bg-purple">
+              <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12">
+                <div class="small-box bg-purple">
 
-                    <a href="rptasistenciau.php" class="small-box-footer">
-                      <div class="inner">
-                        <h5 style="font-size: 20px;">
-                          <strong>Mi reporte de asistencias </strong>
-                        </h5>
-                        <p>Módulo</p>
-                      </div>
-                      <div class="icon">
-                        <i class="fa fa-list" aria-hidden="true"></i>
-                      </div>&nbsp;
-                      <div class="small-box-footer">
-                        <i class="fa"></i>
-                      </div>
+                  <a href="rptasistenciau.php" class="small-box-footer">
+                    <div class="inner">
+                      <h5 style="font-size: 20px;">
+                        <strong>Mi reporte de asistencias </strong>
+                      </h5>
+                      <p>Módulo</p>
+                    </div>
+                    <div class="icon">
+                      <i class="fa fa-list" aria-hidden="true"></i>
+                    </div>&nbsp;
+                    <div class="small-box-footer">
+                      <i class="fa"></i>
+                    </div>
 
-                    </a>
-                  </div>
+                  </a>
                 </div>
-              <?php } ?>
-              <!--fin centro-->
+              </div>
+            <?php } ?>
+            <!--fin centro-->
+          </div>
+          <div class="box box-danger">
+            <div class="box-header with-border">
+              <h3 class="box-title">Donut Chart</h3>
+              <div class="box-tools pull-right">
+                <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i>
+                </button>
+                <button type="button" class="btn btn-box-tool" data-widget="remove"><i class="fa fa-times"></i></button>
+              </div>
             </div>
-            <div class="box box-danger">
-              <div class="box-header with-border">
-                <h3 class="box-title">Donut Chart</h3>
-                <div class="box-tools pull-right">
-                  <button type="button" class="btn btn-box-tool" data-widget="collapse"><i class="fa fa-minus"></i>
-                  </button>
-                  <button type="button" class="btn btn-box-tool" data-widget="remove"><i class="fa fa-times"></i></button>
-                </div>
-              </div>
-              <div class="box-body">
-                <canvas id="pieChart" style="height: 335px; width: 670px;" height="670" width="1340"></canvas>
-              </div>
-
+            <div class="box-body">
+              <canvas id="pieChart" style="height: 335px; width: 670px;" height="670" width="1340"></canvas>
             </div>
           </div>
         </div>
-        <!-- /.box -->
+      </div>
+      <!-- /.box -->
 
     </section>
     <!-- /.content -->
@@ -160,7 +156,7 @@ if (!isset($_SESSION['nombre'])) {
 
 
 
-<?php
+  <?php
   require 'footer.php';
 }
 ob_end_flush();

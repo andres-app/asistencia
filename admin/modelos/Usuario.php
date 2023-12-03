@@ -11,7 +11,7 @@ public function __construct(){
 
 //metodo insertar regiustro
 public function insertar($nombre,$apellidos,$login,$iddepartamento,$idtipousuario,$email,$clavehash,$imagen,$usuariocreado,$codigo_persona){
-	date_default_timezone_set('America/America/Lima');
+	date_default_timezone_set('America/Lima');
 	$fechacreado=date('Y-m-d H:i:s');
 	$sql="INSERT INTO usuarios (nombre,apellidos,login,iddepartamento,idtipousuario,email,password,imagen,estado,fechacreado,usuariocreado,codigo_persona) VALUES ('$nombre','$apellidos','$login','$iddepartamento','$idtipousuario','$email','$clavehash','$imagen','1','$fechacreado','$usuariocreado','$codigo_persona')";
 	return ejecutarConsulta($sql);
