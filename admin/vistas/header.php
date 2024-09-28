@@ -187,7 +187,7 @@ if (strlen(session_id()) < 1)
           <li><a href="departamento.php"><i class="fa fa-folder"></i> <span>Areas</span></a></li>
           <li><a href="#"><i class="fa fa-question-circle"></i> <span>Ayuda</span><small
                 class="label pull-right bg-yellow">PDF</small></a></li>
-          <li><a href="https://www.appsauri.com/"><i class="fa  fa-wrench"></i> <span>Soporte</span></a>
+          <!-- <li><a href="https://www.appsauri.com/"><i class="fa  fa-wrench"></i> <span>Soporte</span></a> -->
           </li>
 
         </ul>
