@@ -11,7 +11,7 @@ public function __construct(){
 
 //metodo insertar regiustro
 public function insertar($nombre,$descripcion,$idusuario){
-		date_default_timezone_set('America/America/Lima');
+		date_default_timezone_set('America/Lima');
 	$fechacreada=date('Y-m-d H:i:s');
 	$sql="INSERT INTO departamento (nombre,descripcion,fechacreada,idusuario) VALUES ('$nombre','$descripcion','$fechacreada','$idusuario')";
 	return ejecutarConsulta($sql);

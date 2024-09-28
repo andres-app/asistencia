@@ -133,32 +133,40 @@ switch ($_GET["op"]) {
 
 	break;
 	case 'listar_asistenciau':
-    $fecha_inicio=$_REQUEST["fecha_inicio"];
-    $fecha_fin=$_REQUEST["fecha_fin"];
-    $codigo_persona=$_SESSION["codigo_persona"]; 
-		$rspta=$asistencia->listar_asistencia($fecha_inicio,$fecha_fin,$codigo_persona);
-		//declaramos un array
-		$data=Array();
-
-
-		while ($reg=$rspta->fetch_object()) {
-			$data[]=array(
-				"0"=>$reg->fecha,
-				"1"=>$reg->nombre,
-				"2"=>$reg->tipo,
-				"3"=>$reg->fecha_hora,
-				"4"=>$reg->codigo_persona
+		$fecha_inicio = isset($_REQUEST["fecha_inicio"]) ? limpiarCadena($_REQUEST["fecha_inicio"]) : null;
+		$fecha_fin = isset($_REQUEST["fecha_fin"]) ? limpiarCadena($_REQUEST["fecha_fin"]) : null;
+		$codigo_persona = $_SESSION["codigo_persona"];
+	
+		if ($fecha_inicio && $fecha_fin && $codigo_persona) {
+			$rspta = $asistencia->listar_asistencia($fecha_inicio, $fecha_fin, $codigo_persona);
+			$data = array();
+	
+			while ($reg = $rspta->fetch_object()) {
+				// Formatea la fecha en formato DD/MM/AAAA
+				$formattedDate = date("d/m/Y", strtotime($reg->fecha));
+				$formattedDateTime = date("d/m/Y H:i:s", strtotime($reg->fecha_hora));
+				
+				$data[] = array(
+					"0" => $formattedDate, // Fecha en formato DD/MM/AAAA
+					"1" => $reg->nombre,
+					"2" => $reg->tipo,
+					"3" => $formattedDateTime, // Fecha y hora en formato DD/MM/AAAA HH:mm:ss
+					"4" => $reg->codigo_persona
 				);
+			}
+	
+			$results = array(
+				"sEcho" => 1,
+				"iTotalRecords" => count($data),
+				"iTotalDisplayRecords" => count($data),
+				"aaData" => $data
+			);
+			echo json_encode($results);
+		} else {
+			echo json_encode(["error" => "Parámetros inválidos"]);
 		}
-
-		$results=array(
-             "sEcho"=>1,//info para datatables
-             "iTotalRecords"=>count($data),//enviamos el total de registros al datatable
-             "iTotalDisplayRecords"=>count($data),//enviamos el total de registros a visualizar
-             "aaData"=>$data); 
-		echo json_encode($results);
-
-	break;
+		break;
+	
 
 		case 'selectPersona':
 			require_once "../modelos/Usuario.php";
