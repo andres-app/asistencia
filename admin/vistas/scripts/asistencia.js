@@ -132,16 +132,18 @@ function listar_asistenciau() {
     var fecha_inicio = $("#fecha_inicio").val();
     var fecha_fin = $("#fecha_fin").val();
 
+    // Verificar si ambas fechas están definidas antes de continuar
+    if (!fecha_inicio || !fecha_fin) {
+        alert("Por favor, selecciona ambas fechas.");
+        return;
+    }
+
     tabla = $('#tbllistado_asistenciau').dataTable({
-        "aProcessing": true,//activamos el procedimiento del datatable
-        "aServerSide": true,//paginacion y filrado realizados por el server
-        dom: 'Bfrtip',//definimos los elementos del control de la tabla
-        buttons: [
-            'excelHtml5',
-            'pdf'
-        ],
-        "ajax":
-        {
+        "aProcessing": true, // Activamos el procesamiento del datatable
+        "aServerSide": true, // Realizamos la paginación y el filtrado en el servidor
+        dom: 'Bfrtip', // Definimos los elementos de la tabla
+        buttons: ['excelHtml5', 'pdf'],
+        "ajax": {
             url: '../ajax/asistencia.php?op=listar_asistenciau',
             data: { fecha_inicio: fecha_inicio, fecha_fin: fecha_fin },
             type: "get",
@@ -151,11 +153,10 @@ function listar_asistenciau() {
             }
         },
         "bDestroy": true,
-        "iDisplayLength": 10,//paginacion
-        "order": [[0, "desc"]]//ordenar (columna, orden)
+        "iDisplayLength": 10, // Paginación
+        "order": [[0, "desc"]] // Ordenar por la primera columna (Fecha) en orden descendente
     }).DataTable();
 }
-
 
 
 init();
