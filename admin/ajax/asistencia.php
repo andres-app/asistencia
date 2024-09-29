@@ -1,151 +1,147 @@
-<?php 
+<?php
 require_once "../modelos/Asistencia.php";
-if (strlen(session_id())<1) 
+if (strlen(session_id()) < 1)
 	session_start();
-$asistencia=new Asistencia();
 
-$codigo_persona=isset($_POST["codigo_persona"])? limpiarCadena($_POST["codigo_persona"]):"";
-$iddepartamento=isset($_POST["iddepartamento"])? limpiarCadena($_POST["iddepartamento"]):"";
+$asistencia = new Asistencia();
 
-
+$codigo_persona = isset($_POST["codigo_persona"]) ? limpiarCadena($_POST["codigo_persona"]) : "";
+$iddepartamento = isset($_POST["iddepartamento"]) ? limpiarCadena($_POST["iddepartamento"]) : "";
+$idasistencia = isset($_POST["idasistencia"]) ? limpiarCadena($_POST["idasistencia"]) : ""; // Nuevo campo idasistencia para edición
 
 switch ($_GET["op"]) {
+
+	// Caso para insertar o editar el registro
 	case 'guardaryeditar':
-		$result=$asistencia->verificarcodigo_persona($codigo_persona);
+		$idasistencia = isset($_POST["idasistencia"]) ? limpiarCadena($_POST["idasistencia"]) : "";
+		$codigo_persona = limpiarCadena($_POST["codigo_persona"]);
+		$fecha_hora = limpiarCadena($_POST["fecha_hora"]);
+		$tipo = limpiarCadena($_POST["tipo"]);
+		$motivo_modificacion = isset($_POST["motivo_modificacion"]) ? limpiarCadena($_POST["motivo_modificacion"]) : "";
 
-      	if($result > 0) {
-	date_default_timezone_set('America/Lima');
-      		$fecha = date("Y-m-d");
-			$hora = date("H:i:s");
+		if (empty($idasistencia)) {
+			// Insertar nuevo registro
+			$rspta = $asistencia->insertar($codigo_persona, $fecha_hora, $tipo);
+			echo $rspta ? "Registro guardado" : "No se pudo registrar";
+		} else {
+			// Editar registro existente
+			$rspta = $asistencia->editar($idasistencia, $codigo_persona, $fecha_hora, $tipo);
 
-			$result2=$asistencia->seleccionarcodigo_persona($codigo_persona);
-			   
-     		$par = abs($result2%2);
+			// Registrar la modificación en la tabla de auditoría
+			if ($rspta) {
+				$sql_auditoria = "INSERT INTO auditoria_asistencia (idasistencia, codigo_persona, fecha_hora, tipo, motivo, fecha_modificacion)
+                                  VALUES ('$idasistencia', '$codigo_persona', '$fecha_hora', '$tipo', '$motivo_modificacion', NOW())";
+				ejecutarConsulta($sql_auditoria);
+				echo "Registro actualizado y auditoría guardada";
+			} else {
+				echo "No se pudo actualizar";
+			}
+		}
+		break;
 
-          if ($par == 0){ 
-                              
-                $tipo = "Entrada";
-        		$rspta=$asistencia->registrar_entrada($codigo_persona,$tipo);
-    			//$movimiento = 0;
-    			echo $rspta ? '<h3><strong>Nombres: </strong> '. $result['nombre'].' '.$result['apellidos'].'</h3><div class="alert alert-success"> Ingreso registrado '.$hora.'</div>' : 'No se pudo registrar el ingreso';
-   		  }else{ 
-                $tipo = "Salida";
-         		$rspta=$asistencia->registrar_salida($codigo_persona,$tipo);
-     			//$movimiento = 1;
-     			echo $rspta ? '<h3><strong>Nombres: </strong> '. $result['nombre'].' '.$result['apellidos'].'</h3><div class="alert alert-danger"> Salida registrada '.$hora.'</div>' : 'No se pudo registrar la salida';             
-        } 
-        } else {
-		         echo '<div class="alert alert-danger">
-                       <i class="icon fa fa-warning"></i> No hay empleado registrado con esa código...!
-                         </div>';
-        }
-
-	break;
-
-	
+	// Caso para obtener un registro específico para editar
 	case 'mostrar':
-		$rspta=$asistencia->mostrar($idasistencia);
+		$rspta = $asistencia->mostrar($idasistencia);
 		echo json_encode($rspta);
-	break;
+		break;
 
-
-	
+	// Caso para listar todos los registros
 	case 'listar':
-		$rspta=$asistencia->listar();
-		//declaramos un array
-		$data=Array();
+		$rspta = $asistencia->listar();
+		$data = array();
 
-
-		while ($reg=$rspta->fetch_object()) {
-			$data[]=array(
-				"0"=>'<button class="btn btn-success btn-xs"><i class="fa fa-check"></i></button>',
-				"1"=>$reg->codigo_persona,
-				"2"=>$reg->nombre,
-				"3"=>$reg->departamento,
-				"4"=>$reg->fecha_hora,
-				"5"=>$reg->tipo,
-				"6"=>$reg->fecha
-				);
+		while ($reg = $rspta->fetch_object()) {
+			$data[] = array(
+				"0" => '<button class="btn btn-warning" onclick="mostrar(' . $reg->idasistencia . ')"><i class="fa fa-pencil"></i></button>',
+				"1" => $reg->codigo_persona,
+				"2" => $reg->nombre,
+				"3" => $reg->departamento,
+				"4" => $reg->fecha_hora,
+				"5" => $reg->tipo,
+				"6" => $reg->fecha
+			);
 		}
 
-		$results=array(
-             "sEcho"=>1,//info para datatables
-             "iTotalRecords"=>count($data),//enviamos el total de registros al datatable
-             "iTotalDisplayRecords"=>count($data),//enviamos el total de registros a visualizar
-             "aaData"=>$data); 
+		$results = array(
+			"sEcho" => 1,
+			"iTotalRecords" => count($data),
+			"iTotalDisplayRecords" => count($data),
+			"aaData" => $data
+		);
 		echo json_encode($results);
-
-	break;
+		break;
 
 	case 'listaru':
-    $idusuario=$_SESSION["idusuario"];
-		$rspta=$asistencia->listaru($idusuario);
+		$idusuario = $_SESSION["idusuario"];
+		$rspta = $asistencia->listaru($idusuario);
 		//declaramos un array
-		$data=Array();
+		$data = array();
 
 
-		while ($reg=$rspta->fetch_object()) {
-			$data[]=array(
-				"0"=>'<button class="btn btn-success btn-xs"><i class="fa fa-check"></i></button>',
-				"1"=>$reg->codigo_persona,
-				"2"=>$reg->nombre,
-				"3"=>$reg->departamento,
-				"4"=>$reg->fecha_hora,
-				"5"=>$reg->tipo,
-				"6"=>$reg->fecha
-				);
+		while ($reg = $rspta->fetch_object()) {
+			$data[] = array(
+				"0" => '<button class="btn btn-success btn-xs"><i class="fa fa-check"></i></button>',
+				"1" => $reg->codigo_persona,
+				"2" => $reg->nombre,
+				"3" => $reg->departamento,
+				"4" => $reg->fecha_hora,
+				"5" => $reg->tipo,
+				"6" => $reg->fecha
+			);
 		}
 
-		$results=array(
-             "sEcho"=>1,//info para datatables
-             "iTotalRecords"=>count($data),//enviamos el total de registros al datatable
-             "iTotalDisplayRecords"=>count($data),//enviamos el total de registros a visualizar
-             "aaData"=>$data); 
+		$results = array(
+			"sEcho" => 1,//info para datatables
+			"iTotalRecords" => count($data),//enviamos el total de registros al datatable
+			"iTotalDisplayRecords" => count($data),//enviamos el total de registros a visualizar
+			"aaData" => $data
+		);
 		echo json_encode($results);
 
-	break;
+		break;
 
 	case 'listar_asistencia':
-    $fecha_inicio=$_REQUEST["fecha_inicio"];
-    $fecha_fin=$_REQUEST["fecha_fin"];
-    $codigo_persona=$_REQUEST["idcliente"]; 
-		$rspta=$asistencia->listar_asistencia($fecha_inicio,$fecha_fin,$codigo_persona);
+		$fecha_inicio = $_REQUEST["fecha_inicio"];
+		$fecha_fin = $_REQUEST["fecha_fin"];
+		$codigo_persona = $_REQUEST["idcliente"];
+		$rspta = $asistencia->listar_asistencia($fecha_inicio, $fecha_fin, $codigo_persona);
 		//declaramos un array
-		$data=Array();
+		$data = array();
 
 
-		while ($reg=$rspta->fetch_object()) {
-			$data[]=array(
-				"0"=>$reg->fecha,
-				"1"=>$reg->nombre,
-				"2"=>$reg->tipo,
-				"3"=>$reg->fecha_hora,
-				"4"=>$reg->codigo_persona
-				);
+		while ($reg = $rspta->fetch_object()) {
+			$data[] = array(
+				"0" => $reg->fecha,
+				"1" => $reg->nombre,
+				"2" => $reg->tipo,
+				"3" => $reg->fecha_hora,
+				"4" => $reg->codigo_persona
+			);
 		}
 
-		$results=array(
-             "sEcho"=>1,//info para datatables
-             "iTotalRecords"=>count($data),//enviamos el total de registros al datatable
-             "iTotalDisplayRecords"=>count($data),//enviamos el total de registros a visualizar
-             "aaData"=>$data); 
+		$results = array(
+			"sEcho" => 1,//info para datatables
+			"iTotalRecords" => count($data),//enviamos el total de registros al datatable
+			"iTotalDisplayRecords" => count($data),//enviamos el total de registros a visualizar
+			"aaData" => $data
+		);
 		echo json_encode($results);
 
-	break;
+		break;
 	case 'listar_asistenciau':
 		$fecha_inicio = isset($_REQUEST["fecha_inicio"]) ? limpiarCadena($_REQUEST["fecha_inicio"]) : null;
 		$fecha_fin = isset($_REQUEST["fecha_fin"]) ? limpiarCadena($_REQUEST["fecha_fin"]) : null;
 		$codigo_persona = $_SESSION["codigo_persona"];
-	
+
 		if ($fecha_inicio && $fecha_fin && $codigo_persona) {
 			$rspta = $asistencia->listar_asistencia($fecha_inicio, $fecha_fin, $codigo_persona);
 			$data = array();
-	
+
 			while ($reg = $rspta->fetch_object()) {
 				// Formatea la fecha en formato DD/MM/AAAA
 				$formattedDate = date("d/m/Y", strtotime($reg->fecha));
 				$formattedDateTime = date("d/m/Y H:i:s", strtotime($reg->fecha_hora));
-				
+
 				$data[] = array(
 					"0" => $formattedDate, // Fecha en formato DD/MM/AAAA
 					"1" => $reg->nombre,
@@ -154,7 +150,7 @@ switch ($_GET["op"]) {
 					"4" => $reg->codigo_persona
 				);
 			}
-	
+
 			$results = array(
 				"sEcho" => 1,
 				"iTotalRecords" => count($data),
@@ -166,18 +162,18 @@ switch ($_GET["op"]) {
 			echo json_encode(["error" => "Parámetros inválidos"]);
 		}
 		break;
-	
 
-		case 'selectPersona':
-			require_once "../modelos/Usuario.php";
-			$usuario=new Usuario();
 
-			$rspta=$usuario->listar();
+	case 'selectPersona':
+		require_once "../modelos/Usuario.php";
+		$usuario = new Usuario();
 
-			while ($reg=$rspta->fetch_object()) {
-				echo '<option value=' . $reg->codigo_persona.'>'.$reg->nombre.' '.$reg->apellidos.'</option>';
-			}
-			break;
+		$rspta = $usuario->listar();
+
+		while ($reg = $rspta->fetch_object()) {
+			echo '<option value=' . $reg->codigo_persona . '>' . $reg->nombre . ' ' . $reg->apellidos . '</option>';
+		}
+		break;
 
 }
 ?>

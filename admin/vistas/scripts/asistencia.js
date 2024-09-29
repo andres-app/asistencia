@@ -19,21 +19,45 @@ function init() {
     });
 }
 
+// Función para limpiar el formulario
+function limpiar() {
+    $("#idasistencia").val("");
+    $("#nombre").val("");
+    $("#codigo_persona").val("");
+    $("#fecha_hora").val("");
+    $("#tipo").val("Entrada");
+}
 
+// Función para mostrar el formulario
+function mostrarform(flag) {
+    limpiar();
+    if (flag) {
+        $("#listadoregistros").hide();
+        $("#formularioregistros").show();
+        $("#btnGuardar").prop("disabled", false);
+    } else {
+        $("#listadoregistros").show();
+        $("#formularioregistros").hide();
+    }
+}
 
+// Función para cancelar el formulario
+function cancelarform() {
+    limpiar();
+    mostrarform(false);
+}
 
-//funcion listar
+// Función para listar los registros en el datatable
 function listar() {
     tabla = $('#tbllistado').dataTable({
-        "aProcessing": true,//activamos el procedimiento del datatable
-        "aServerSide": true,//paginacion y filrado realizados por el server
-        dom: 'Bfrtip',//definimos los elementos del control de la tabla
+        "aProcessing": true, // Activamos el procesamiento del datatable
+        "aServerSide": true, // Paginación y filtrado realizados por el servidor
+        dom: 'Bfrtip', // Definimos los elementos del control de tabla
         buttons: [
             'excelHtml5',
             'pdf'
         ],
-        "ajax":
-        {
+        "ajax": {
             url: '../ajax/asistencia.php?op=listar',
             type: "get",
             dataType: "json",
@@ -42,35 +66,43 @@ function listar() {
             }
         },
         "bDestroy": true,
-        "iDisplayLength": 10,//paginacion
-        "order": [[0, "desc"]]//ordenar (columna, orden)
-    }).DataTable();
-}
-function listaru() {
-    tabla = $('#tbllistadou').dataTable({
-        "aProcessing": true,//activamos el procedimiento del datatable
-        "aServerSide": true,//paginacion y filrado realizados por el server
-        dom: 'Bfrtip',//definimos los elementos del control de la tabla
-        buttons: [
-            'excelHtml5',
-            'pdf'
-        ],
-        "ajax":
-        {
-            url: '../ajax/asistencia.php?op=listaru',
-            type: "get",
-            dataType: "json",
-            error: function (e) {
-                console.log(e.responseText);
-            }
-        },
-        "bDestroy": true,
-        "iDisplayLength": 10,//paginacion
-        "order": [[0, "desc"]]//ordenar (columna, orden)
+        "iDisplayLength": 10, // Paginación
+        "order": [[0, "desc"]] // Ordenar por la primera columna (Fecha) en orden descendente
     }).DataTable();
 }
 
+// Función para guardar y editar
+function guardaryeditar(e) {
+    e.preventDefault(); // Evitamos que se recargue la página
+    var formData = new FormData($("#formulario")[0]);
 
+    $.ajax({
+        url: "../ajax/asistencia.php?op=guardaryeditar",
+        type: "POST",
+        data: formData,
+        contentType: false,
+        processData: false,
+        success: function (datos) {
+            alert(datos); // Mostramos el mensaje del backend
+            mostrarform(false); // Ocultamos el formulario
+            tabla.ajax.reload(); // Recargamos la tabla
+        }
+    });
+}
+
+// Función para mostrar un registro en el formulario para editar
+function mostrar(idasistencia) {
+    $.post("../ajax/asistencia.php?op=mostrar", { idasistencia: idasistencia }, function (data, status) {
+        data = JSON.parse(data); // Parseamos la respuesta JSON
+        mostrarform(true); // Mostramos el formulario
+
+        $("#idasistencia").val(data.idasistencia);
+        $("#nombre").val(data.nombre);
+        $("#codigo_persona").val(data.codigo_persona);
+        $("#fecha_hora").val(data.fecha_hora);
+        $("#tipo").val(data.tipo);
+    });
+}
 
 function listar_asistencia() {
     var fecha_inicio = $("#fecha_inicio").val();
@@ -78,9 +110,9 @@ function listar_asistencia() {
     var idcliente = $("#idcliente").val();
 
     tabla = $('#tbllistado_asistencia').dataTable({
-        "aProcessing": true, //activamos el procedimiento del datatable
-        "aServerSide": true, //paginacion y filtrado realizados por el server
-        dom: 'Bfrtip', //definimos los elementos del control de la tabla
+        "aProcessing": true, // Activamos el procedimiento del datatable
+        "aServerSide": true, // Paginación y filtrado realizados por el servidor
+        dom: 'Bfrtip', // Definimos los elementos del control de la tabla
         buttons: ['excelHtml5', 'pdf'],
         "ajax": {
             url: '../ajax/asistencia.php?op=listar_asistencia',
@@ -92,14 +124,13 @@ function listar_asistencia() {
             }
         },
         "bDestroy": true,
-        "iDisplayLength": 10, //paginacion
-        "order": [[0, "desc"]], //ordenar (columna, orden)
+        "iDisplayLength": 10, // Paginación
+        "order": [[0, "desc"]], // Ordenar (columna, orden)
         "columnDefs": [
             {
                 "targets": 0, // Primera columna donde está la fecha
                 "render": function (data, type, row) {
                     if (data) {
-                        // Asumiendo que el formato que llega desde la base de datos es "YYYY-MM-DD"
                         var parts = data.split("-"); // Dividir la fecha en partes
                         var day = parts[2];  // Día
                         var month = parts[1];  // Mes
@@ -108,7 +139,6 @@ function listar_asistencia() {
                     }
                     return data; // Si no hay dato, lo muestra tal cual
                 }
-
             },
             {
                 "targets": 3, // Columna de Fecha/Hora
@@ -127,12 +157,10 @@ function listar_asistencia() {
     }).DataTable();
 }
 
-
 function listar_asistenciau() {
     var fecha_inicio = $("#fecha_inicio").val();
     var fecha_fin = $("#fecha_fin").val();
 
-    // Verificar si ambas fechas están definidas antes de continuar
     if (!fecha_inicio || !fecha_fin) {
         alert("Por favor, selecciona ambas fechas.");
         return;
@@ -140,7 +168,7 @@ function listar_asistenciau() {
 
     tabla = $('#tbllistado_asistenciau').dataTable({
         "aProcessing": true, // Activamos el procesamiento del datatable
-        "aServerSide": true, // Realizamos la paginación y el filtrado en el servidor
+        "aServerSide": true, // Realizamos la paginación y filtrado en el servidor
         dom: 'Bfrtip', // Definimos los elementos de la tabla
         buttons: ['excelHtml5', 'pdf'],
         "ajax": {
@@ -157,6 +185,50 @@ function listar_asistenciau() {
         "order": [[0, "desc"]] // Ordenar por la primera columna (Fecha) en orden descendente
     }).DataTable();
 }
+
+$(document).ready(function () {
+    // Al hacer clic en el botón Guardar
+    $("#btnGuardar").click(function (e) {
+        e.preventDefault(); // Evita el envío inmediato del formulario
+        $("#modalConfirmar").modal("show"); // Muestra el modal de confirmación
+    });
+
+    // Confirmación para guardar la modificación
+    $("#confirmarGuardar").click(function () {
+        var motivo = $("#motivo").val();
+        if (motivo.trim() === "") {
+            alert("Por favor, ingresa el motivo de la modificación.");
+        } else {
+            // Agregar el motivo al formulario como un campo oculto
+            $("<input>").attr({
+                type: "hidden",
+                id: "motivo_modificacion",
+                name: "motivo_modificacion",
+                value: motivo
+            }).appendTo("#formulario");
+
+            // Enviar el formulario con AJAX
+            var formData = new FormData($("#formulario")[0]);
+
+            $.ajax({
+                url: "../ajax/asistencia.php?op=guardaryeditar",
+                type: "POST",
+                data: formData,
+                contentType: false,
+                processData: false,
+                success: function (datos) {
+                    alert(datos); // Mostrar el mensaje del backend
+                    $("#modalConfirmar").modal("hide"); // Cierra el modal
+                    $("#formulario")[0].reset(); // Limpiar el formulario
+                    $("#formularioregistros").hide(); // Ocultar el formulario de nuevo
+                    $("#listadoregistros").show(); // Mostrar el listado de registros
+                    tabla.ajax.reload(); // Recargar el datatable
+                }
+            });
+        }
+    });
+});
+
 
 
 init();

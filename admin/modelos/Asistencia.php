@@ -1,47 +1,83 @@
-<?php 
-//incluir la conexion de base de datos
+<?php
+// Incluir la conexión a la base de datos
 require "../config/Conexion.php";
-class Asistencia{
 
+class Asistencia
+{
 
-	//implementamos nuestro constructor
-public function __construct(){
-
-}
-
-
-//listar registros
-public function listar(){
-	$sql="SELECT a.idasistencia,a.codigo_persona,a.fecha_hora,a.tipo,a.fecha,u.nombre,u.apellidos,d.nombre as departamento FROM asistencia a INNER JOIN usuarios u INNER JOIN departamento d ON u.iddepartamento=d.iddepartamento WHERE a.codigo_persona=u.codigo_persona";
-	return ejecutarConsulta($sql);
-}
-
-public function listaru($idusuario){
-	$sql="SELECT a.idasistencia,a.codigo_persona,a.fecha_hora,a.tipo,a.fecha,u.nombre,u.apellidos,d.nombre as departamento FROM asistencia a INNER JOIN usuarios u INNER JOIN departamento d ON u.iddepartamento=d.iddepartamento WHERE a.codigo_persona=u.codigo_persona AND u.idusuario='$idusuario'";
-	return ejecutarConsulta($sql);
-}
-
-public function listar_asistencia($fecha_inicio, $fecha_fin, $codigo_persona) {
-    // Si el valor de $codigo_persona es vacío, mostramos todas las asistencias
-    if ($codigo_persona == '') {
-        // Mostrar todos los registros sin filtrar por cliente
-        $sql = "SELECT a.idasistencia, a.codigo_persona, a.fecha_hora, a.tipo, a.fecha, u.nombre, u.apellidos 
-                FROM asistencia a 
-                INNER JOIN usuarios u ON a.codigo_persona = u.codigo_persona 
-                WHERE DATE(a.fecha) >= '$fecha_inicio' AND DATE(a.fecha) <= '$fecha_fin'";
-    } else {
-        // Mostrar los registros filtrados por cliente específico
-        $sql = "SELECT a.idasistencia, a.codigo_persona, a.fecha_hora, a.tipo, a.fecha, u.nombre, u.apellidos 
-                FROM asistencia a 
-                INNER JOIN usuarios u ON a.codigo_persona = u.codigo_persona 
-                WHERE DATE(a.fecha) >= '$fecha_inicio' AND DATE(a.fecha) <= '$fecha_fin' 
-                AND a.codigo_persona = '$codigo_persona'";
+    // Implementamos nuestro constructor
+    public function __construct()
+    {
     }
 
-    return ejecutarConsulta($sql);
+    // Método para listar todos los registros
+    public function listar()
+    {
+        $sql = "SELECT a.idasistencia,a.codigo_persona,a.fecha_hora,a.tipo,a.fecha,u.nombre,u.apellidos,d.nombre as departamento 
+                FROM asistencia a 
+                INNER JOIN usuarios u INNER JOIN departamento d 
+                ON u.iddepartamento=d.iddepartamento 
+                WHERE a.codigo_persona=u.codigo_persona";
+        return ejecutarConsulta($sql);
+    }
+
+    // Método para listar registros de un usuario específico
+    public function listaru($idusuario)
+    {
+        $sql = "SELECT a.idasistencia,a.codigo_persona,a.fecha_hora,a.tipo,a.fecha,u.nombre,u.apellidos,d.nombre as departamento 
+                FROM asistencia a 
+                INNER JOIN usuarios u INNER JOIN departamento d 
+                ON u.iddepartamento=d.iddepartamento 
+                WHERE a.codigo_persona=u.codigo_persona AND u.idusuario='$idusuario'";
+        return ejecutarConsulta($sql);
+    }
+
+    // Método para listar asistencias por fechas y, opcionalmente, por un código de persona específico
+    public function listar_asistencia($fecha_inicio, $fecha_fin, $codigo_persona)
+    {
+        if ($codigo_persona == '') {
+            $sql = "SELECT a.idasistencia, a.codigo_persona, a.fecha_hora, a.tipo, a.fecha, u.nombre, u.apellidos 
+                    FROM asistencia a 
+                    INNER JOIN usuarios u ON a.codigo_persona = u.codigo_persona 
+                    WHERE DATE(a.fecha) >= '$fecha_inicio' AND DATE(a.fecha) <= '$fecha_fin'";
+        } else {
+            $sql = "SELECT a.idasistencia, a.codigo_persona, a.fecha_hora, a.tipo, a.fecha, u.nombre, u.apellidos 
+                    FROM asistencia a 
+                    INNER JOIN usuarios u ON a.codigo_persona = u.codigo_persona 
+                    WHERE DATE(a.fecha) >= '$fecha_inicio' AND DATE(a.fecha) <= '$fecha_fin' 
+                    AND a.codigo_persona = '$codigo_persona'";
+        }
+
+        return ejecutarConsulta($sql);
+    }
+
+    // Método para insertar un nuevo registro
+    public function insertar($codigo_persona, $fecha_hora, $tipo)
+    {
+        $sql = "INSERT INTO asistencia (codigo_persona, fecha_hora, tipo) 
+                VALUES ('$codigo_persona', '$fecha_hora', '$tipo')";
+        return ejecutarConsulta($sql);
+    }
+
+    // Método para editar un registro existente
+    public function editar($idasistencia, $codigo_persona, $fecha_hora, $tipo)
+    {
+        $sql = "UPDATE asistencia 
+                SET codigo_persona = '$codigo_persona', fecha_hora = '$fecha_hora', tipo = '$tipo' 
+                WHERE idasistencia = '$idasistencia'";
+        return ejecutarConsulta($sql);
+    }
+
+    // Método para mostrar un registro específico
+    public function mostrar($idasistencia)
+    {
+        // Hacemos un JOIN para obtener el nombre desde la tabla usuarios
+        $sql = "SELECT a.idasistencia, a.codigo_persona, u.nombre, a.fecha_hora, a.tipo 
+                FROM asistencia a 
+                INNER JOIN usuarios u ON a.codigo_persona = u.codigo_persona 
+                WHERE a.idasistencia = '$idasistencia'";
+        return ejecutarConsultaSimpleFila($sql);
+    }
+
 }
-
-
-}
-
- ?>
+?>
