@@ -26,7 +26,7 @@ if (!isset($_SESSION['nombre'])) {
             <div class="panel-body table-responsive" id="listadoregistros">
               <div class="form-group col-lg-3 col-md-3 col-sm-6 col-xs-12">
                 <label>Fecha Inicio</label>
-                <input type="date" class="form-control" name="fecha_inicio" id="fecha_inicio" value="<?php echo date("Y-m-d"); ?>">
+                <input type="date" class="form-control" name="fecha_inicio" id="fecha_inicio" value="<?php echo date("Y-m-01"); ?>">
               </div>
               <div class="form-group col-lg-3 col-md-3 col-sm-6 col-xs-12">
                 <label>Fecha Fin</label>
