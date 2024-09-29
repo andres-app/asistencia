@@ -21,9 +21,24 @@ public function listaru($idusuario){
 	return ejecutarConsulta($sql);
 }
 
-public function listar_asistencia($fecha_inicio,$fecha_fin,$codigo_persona){
-	$sql="SELECT a.idasistencia,a.codigo_persona,a.fecha_hora,a.tipo,a.fecha,u.nombre,u.apellidos FROM asistencia a INNER JOIN usuarios u ON  a.codigo_persona=u.codigo_persona WHERE DATE(a.fecha)>='$fecha_inicio' AND DATE(a.fecha)<='$fecha_fin' AND a.codigo_persona='$codigo_persona'";
-	return ejecutarConsulta($sql);
+public function listar_asistencia($fecha_inicio, $fecha_fin, $codigo_persona) {
+    // Si el valor de $codigo_persona es vacío, mostramos todas las asistencias
+    if ($codigo_persona == '') {
+        // Mostrar todos los registros sin filtrar por cliente
+        $sql = "SELECT a.idasistencia, a.codigo_persona, a.fecha_hora, a.tipo, a.fecha, u.nombre, u.apellidos 
+                FROM asistencia a 
+                INNER JOIN usuarios u ON a.codigo_persona = u.codigo_persona 
+                WHERE DATE(a.fecha) >= '$fecha_inicio' AND DATE(a.fecha) <= '$fecha_fin'";
+    } else {
+        // Mostrar los registros filtrados por cliente específico
+        $sql = "SELECT a.idasistencia, a.codigo_persona, a.fecha_hora, a.tipo, a.fecha, u.nombre, u.apellidos 
+                FROM asistencia a 
+                INNER JOIN usuarios u ON a.codigo_persona = u.codigo_persona 
+                WHERE DATE(a.fecha) >= '$fecha_inicio' AND DATE(a.fecha) <= '$fecha_fin' 
+                AND a.codigo_persona = '$codigo_persona'";
+    }
+
+    return ejecutarConsulta($sql);
 }
 
 

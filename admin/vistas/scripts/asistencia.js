@@ -1,19 +1,22 @@
 var tabla;
 
-//funcion que se ejecuta al inicio
+// Función que se ejecuta al inicio
 function init(){
    listar();
-      listaru();
-$("#formulario").on("submit",function(e){
-   	guardaryeditar(e);
-   })
+   listaru();
 
-    //cargamos los items al select cliente
-   $.post("../ajax/asistencia.php?op=selectPersona", function(r){
-   	$("#idcliente").html(r);
-   	$('#idcliente').selectpicker('refresh');
+   // Manejo de formularios
+   $("#formulario").on("submit",function(e){
+      guardaryeditar(e);
    });
 
+   // Cargamos los items al select cliente
+   $.post("../ajax/asistencia.php?op=selectPersona", function(r){
+      // Agregar opción "Todos" al inicio del select
+      var todosOption = '<option value="">Todos</option>';
+      $("#idcliente").html(todosOption + r); // Concatenar la opción "Todos" con los demás resultados
+      $('#idcliente').selectpicker('refresh'); // Refrescar el selectpicker para actualizar
+   });
 }
 
 
