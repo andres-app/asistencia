@@ -45,7 +45,7 @@ switch ($_GET["op"]) {
 		echo json_encode($rspta);
 		break;
 
-	// Caso para listar todos los registros
+	// LISTA DE ASISTENCIA ADMINISTRADOR
 	case 'listar':
 		$rspta = $asistencia->listar();
 		$data = array();
@@ -54,7 +54,7 @@ switch ($_GET["op"]) {
 			$data[] = array(
 				"0" => '<button class="btn btn-warning" onclick="mostrar(' . $reg->idasistencia . ')"><i class="fa fa-pencil"></i></button>',
 				"1" => $reg->codigo_persona,
-				"2" => $reg->nombre,
+				"2" => $reg->nombre . ' ' . $reg->apellidos,
 				"3" => $reg->departamento,
 				"4" => $reg->fecha_hora,
 				"5" => $reg->tipo,
@@ -70,7 +70,7 @@ switch ($_GET["op"]) {
 		);
 		echo json_encode($results);
 		break;
-
+	// LISTA DE ASISTENCIA PERSONAL
 	case 'listaru':
 		$idusuario = $_SESSION["idusuario"];
 		$rspta = $asistencia->listaru($idusuario);
@@ -82,7 +82,7 @@ switch ($_GET["op"]) {
 			$data[] = array(
 				"0" => '<button class="btn btn-success btn-xs">Registrado <i class="fa fa-check"></i></button>',
 				"1" => $reg->codigo_persona,
-				"2" => $reg->nombre,
+				"2" => $reg->nombre . ' ' . $reg->apellidos,
 				"3" => $reg->departamento,
 				"4" => $reg->fecha_hora,
 				"5" => $reg->tipo,
@@ -112,7 +112,7 @@ switch ($_GET["op"]) {
 		while ($reg = $rspta->fetch_object()) {
 			$data[] = array(
 				"0" => $reg->fecha,
-				"1" => $reg->nombre,
+				"1" => $reg->nombre . ' ' . $reg->apellidos,
 				"2" => $reg->tipo,
 				"3" => $reg->fecha_hora,
 				"4" => $reg->codigo_persona
@@ -144,7 +144,7 @@ switch ($_GET["op"]) {
 
 				$data[] = array(
 					"0" => $formattedDate, // Fecha en formato DD/MM/AAAA
-					"1" => $reg->nombre,
+					"1" => $reg->nombre . ' ' . $reg->apellidos,
 					"2" => $reg->tipo,
 					"3" => $formattedDateTime, // Fecha y hora en formato DD/MM/AAAA HH:mm:ss
 					"4" => $reg->codigo_persona

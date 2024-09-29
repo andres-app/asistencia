@@ -62,7 +62,7 @@ if (!isset($_SESSION['nombre'])) {
 
                                 <!-- Total de Empleados -->
                                 <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12">
-                                    <div class="small-box bg-aqua">
+                                    <div class="small-box bg-yellow">
                                         <div class="inner">
                                             <h3><?php echo $total_usuarios; ?></h3>
                                             <p>Total de Empleados</p>
