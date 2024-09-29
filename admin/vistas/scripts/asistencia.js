@@ -16,7 +16,10 @@ function init() {
         var todosOption = '<option value="">Todos</option>';
         $("#idcliente").html(todosOption + r); // Concatenar la opción "Todos" con los demás resultados
         $('#idcliente').selectpicker('refresh'); // Refrescar el selectpicker para actualizar
+    }).fail(function(e) {
+        console.log("Error al cargar empleados: ", e.responseText); // Mostrar error en consola si la solicitud falla
     });
+    
 }
 
 // Función para limpiar el formulario
@@ -68,6 +71,27 @@ function listar() {
         "bDestroy": true,
         "iDisplayLength": 10, // Paginación
         "order": [[0, "desc"]] // Ordenar por la primera columna (Fecha) en orden descendente
+    }).DataTable();
+}
+
+// Función para listar registros de asistencia para usuarios con menos privilegios
+function listaru() {
+    tabla = $('#tbllistadou').dataTable({
+        "aProcessing": true, // Activar procesamiento del datatable
+        "aServerSide": true, // Paginación y filtrado del lado del servidor
+        dom: 'Bfrtip', // Definir los elementos del control de la tabla
+        buttons: ['excelHtml5', 'pdf'],
+        "ajax": {
+            url: '../ajax/asistencia.php?op=listaru',
+            type: "get",
+            dataType: "json",
+            error: function (e) {
+                console.log(e.responseText);
+            }
+        },
+        "bDestroy": true, // Destruir el datatable existente antes de recargar
+        "iDisplayLength": 10, // Paginación
+        "order": [[0, "desc"]] // Ordenar por la primera columna en orden descendente
     }).DataTable();
 }
 

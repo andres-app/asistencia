@@ -164,16 +164,18 @@ switch ($_GET["op"]) {
 		break;
 
 
-	case 'selectPersona':
-		require_once "../modelos/Usuario.php";
-		$usuario = new Usuario();
-
-		$rspta = $usuario->listar();
-
-		while ($reg = $rspta->fetch_object()) {
-			echo '<option value=' . $reg->codigo_persona . '>' . $reg->nombre . ' ' . $reg->apellidos . '</option>';
-		}
-		break;
+		case 'selectPersona':
+			require_once "../modelos/Usuario.php";
+			$usuario = new Usuario();
+		
+			$rspta = $usuario->listar();
+			
+			while ($reg = $rspta->fetch_object()) {
+				print_r($reg); // Esto te permitirá ver si los datos están siendo obtenidos correctamente
+				echo '<option value=' . $reg->codigo_persona . '>' . $reg->nombre . ' ' . $reg->apellidos . '</option>';
+			}
+			break;
+		
 
 }
 ?>

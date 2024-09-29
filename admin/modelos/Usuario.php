@@ -50,7 +50,8 @@ class Usuario {
 
     //listar registros
     public function listar() {
-        $sql = "SELECT * FROM usuarios";
+        // Asegúrate de que esta consulta esté funcionando correctamente
+        $sql = "SELECT codigo_persona, nombre, apellidos FROM usuarios";
         return ejecutarConsulta($sql);
     }
 
