@@ -1,0 +1,143 @@
+<?php
+// Incluir la biblioteca FPDF
+require '../fpdf/fpdf.php';
+
+// Incluir la conexión a la base de datos
+require_once "../config/Conexion.php";
+
+// Recibir los parámetros desde el formulario
+$fecha_inicio = $_GET["fecha_inicio"];
+$fecha_fin = $_GET["fecha_fin"];
+$idcliente = $_GET["idcliente"];
+
+// Crear el PDF
+$pdf = new FPDF('P', 'mm', 'A4');
+$pdf->AddPage();
+$pdf->SetMargins(10, 10, 10);
+$pdf->SetAutoPageBreak(true, 20);
+
+// Función para obtener el mes en letras
+function obtenerMesEnLetras($fecha) {
+    setlocale(LC_TIME, 'es_ES.UTF-8'); // Configurar para que sea en español
+    return strftime('%B', strtotime($fecha)); // Obtiene el mes en letras
+}
+
+// Función para obtener todas las fechas en un rango
+function generarFechas($fecha_inicio, $fecha_fin) {
+    $fechas = [];
+    $current = strtotime($fecha_inicio);
+    $end = strtotime($fecha_fin);
+
+    while ($current <= $end) {
+        $fechas[] = date('Y-m-d', $current);
+        $current = strtotime('+1 day', $current);
+    }
+
+    return $fechas;
+}
+
+// Encabezado del PDF
+$pdf->SetFont('Arial', 'B', 16);
+$pdf->Cell(0, 10, utf8_decode('Reporte de Asistencia'), 0, 1, 'C');
+$pdf->SetFont('Arial', 'I', 12);
+$pdf->Cell(0, 10, utf8_decode('QUIMBAYA TOURS'), 0, 1, 'C');
+
+// Obtener el mes y el año de la fecha de inicio y de fin
+$mes_inicio = obtenerMesEnLetras($fecha_inicio);
+$mes_fin = obtenerMesEnLetras($fecha_fin);
+$anio_inicio = date('Y', strtotime($fecha_inicio));
+$anio_fin = date('Y', strtotime($fecha_fin));
+
+// Mostrar el rango de meses en caso de que sean distintos
+if ($mes_inicio == $mes_fin && $anio_inicio == $anio_fin) {
+    // Si es el mismo mes y año
+    $periodo = "Periodo: $mes_inicio del $anio_inicio";
+} else {
+    // Si los meses o años son diferentes
+    if ($anio_inicio == $anio_fin) {
+        // Mismo año, diferentes meses
+        $periodo = "Periodo: $mes_inicio, $mes_fin del $anio_inicio";
+    } else {
+        // Diferentes años
+        $periodo = "Periodo: $mes_inicio del $anio_inicio a $mes_fin del $anio_fin";
+    }
+}
+
+$pdf->SetFont('Arial', 'B', 12);
+$pdf->Cell(0, 10, utf8_decode($periodo), 0, 1, 'C'); // Mostramos el periodo con los meses en letras
+
+// Espacio
+$pdf->Ln(10);
+
+// Estilo de la tabla
+$pdf->SetFont('Arial', 'B', 10);
+$pdf->SetFillColor(200, 220, 255); // Color de fondo de las celdas de la cabecera
+
+// Títulos de las columnas
+$pdf->Cell(30, 10, 'Fecha', 1, 0, 'C', true);
+$pdf->Cell(50, 10, 'Empleado', 1, 0, 'C', true);
+$pdf->Cell(30, 10, 'Registro', 1, 0, 'C', true);
+$pdf->Cell(40, 10, 'Hora', 1, 0, 'C', true); // Cambiado el título a "Hora"
+$pdf->Cell(30, 10, 'Codigo', 1, 1, 'C', true);
+
+// Generar todas las fechas del rango
+$fechas = generarFechas($fecha_inicio, $fecha_fin);
+
+// Consultar los registros de la base de datos para el cliente y las fechas seleccionadas
+$sql = "SELECT a.fecha, u.nombre, u.apellidos, a.tipo, a.fecha_hora, a.codigo_persona 
+        FROM asistencia a 
+        INNER JOIN usuarios u ON a.codigo_persona = u.codigo_persona 
+        WHERE a.fecha >= '$fecha_inicio' AND a.fecha <= '$fecha_fin'";
+
+if (!empty($idcliente)) {
+    $sql .= " AND a.codigo_persona = '$idcliente'";
+}
+
+$resultado = ejecutarConsulta($sql);
+
+// Almacenar los resultados en un array para verificarlos más fácilmente
+$registros = [];
+while ($row = $resultado->fetch_assoc()) {
+    $registros[$row['fecha']][] = $row;
+}
+
+// Agregar los registros a la tabla en el PDF
+$pdf->SetFont('Arial', '', 10);
+$pdf->SetFillColor(240, 240, 240); // Color de fondo para las filas
+$fill = false;
+
+// Recorrer todas las fechas y verificar si tienen registros
+foreach ($fechas as $fecha) {
+    if (isset($registros[$fecha])) {
+        foreach ($registros[$fecha] as $registro) {
+            // Formatear la fecha a DD-MM-YYYY
+            $fecha_formateada = date('d-m-Y', strtotime($fecha));
+            $hora = date('H:i:s', strtotime($registro['fecha_hora'])); // Extraer solo la hora
+
+            $pdf->Cell(30, 10, utf8_decode($fecha_formateada), 1, 0, 'C', $fill); // Fecha en formato DD-MM-YYYY
+            $pdf->Cell(50, 10, utf8_decode($registro['nombre'] . ' ' . $registro['apellidos']), 1, 0, 'L', $fill);
+            $pdf->Cell(30, 10, utf8_decode($registro['tipo']), 1, 0, 'C', $fill);
+            $pdf->Cell(40, 10, utf8_decode($hora), 1, 0, 'C', $fill); // Mostrar solo la hora
+            $pdf->Cell(30, 10, utf8_decode($registro['codigo_persona']), 1, 1, 'C', $fill);
+            $fill = !$fill; // Alternar color de fondo para cada fila
+        }
+    } else {
+        // Si no hay registro para esta fecha, mostrar "No registro"
+        $fecha_formateada = date('d-m-Y', strtotime($fecha));
+        $pdf->Cell(30, 10, utf8_decode($fecha_formateada), 1, 0, 'C', $fill); // Fecha en formato DD-MM-YYYY
+        $pdf->Cell(50, 10, 'No registro', 1, 0, 'C', $fill); // Empleado "No registro"
+        $pdf->Cell(30, 10, '-', 1, 0, 'C', $fill); // Tipo vacío
+        $pdf->Cell(40, 10, '-', 1, 0, 'C', $fill); // Hora vacía
+        $pdf->Cell(30, 10, '-', 1, 1, 'C', $fill); // Código persona vacío
+        $fill = !$fill;
+    }
+}
+
+// Pie de página
+$pdf->SetY(-30);
+$pdf->SetFont('Arial', 'I', 8);
+$pdf->Cell(0, 10, utf8_decode('Reporte generado automáticamente por el sistema de asistencia.'), 0, 0, 'C');
+
+// Salida del archivo PDF
+$pdf->Output();
+?>

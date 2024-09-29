@@ -210,6 +210,17 @@ function listar_asistenciau() {
     }).DataTable();
 }
 
+function generarPDF() {
+    var fecha_inicio = $("#fecha_inicio").val();
+    var fecha_fin = $("#fecha_fin").val();
+    var idcliente = $("#idcliente").val();
+
+    // Ajusta la ruta para acceder correctamente al archivo reporte_asistencia.php
+    window.open('../vistas/reporte_asistencia.php?fecha_inicio=' + fecha_inicio + '&fecha_fin=' + fecha_fin + '&idcliente=' + idcliente, '_blank');
+}
+
+
+
 $(document).ready(function () {
     // Al hacer clic en el botón Guardar
     $("#btnGuardar").click(function (e) {

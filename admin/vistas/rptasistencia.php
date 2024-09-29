@@ -26,19 +26,26 @@ if (!isset($_SESSION['nombre'])) {
             <div class="panel-body table-responsive" id="listadoregistros">
               <div class="form-group col-lg-3 col-md-3 col-sm-6 col-xs-12">
                 <label>Fecha Inicio</label>
-                <input type="date" class="form-control" name="fecha_inicio" id="fecha_inicio" value="<?php echo date("Y-m-01"); ?>">
+                <input type="date" class="form-control" name="fecha_inicio" id="fecha_inicio"
+                  value="<?php echo date("Y-m-01"); ?>">
               </div>
               <div class="form-group col-lg-3 col-md-3 col-sm-6 col-xs-12">
                 <label>Fecha Fin</label>
-                <input type="date" class="form-control" name="fecha_fin" id="fecha_fin" value="<?php echo date("Y-m-d"); ?>">
+                <input type="date" class="form-control" name="fecha_fin" id="fecha_fin"
+                  value="<?php echo date("Y-m-d"); ?>">
               </div>
               <div class="form-inline col-lg-3 col-md-6 col-sm-6 col-xs-12">
                 <label>Empleado</label>
-                <select name="idcliente" id="idcliente" class="form-control selectpicker" data-live-search="true" required></select>
+                <select name="idcliente" id="idcliente" class="form-control selectpicker" data-live-search="true"
+                  required></select>
               </div>
               <div class="col-lg-3 col-md-6 col-sm-6 col-xs-12 pt-3" style="padding-top: 24px">
                 <button class="btn btn-success" onclick="listar_asistencia();">Mostrar</button>
+                <a href="javascript:void(0);" onclick="generarPDF();" class="btn btn-danger">
+                  <i class="fa fa-file-pdf-o" style="font-size: 18px;"></i>
+                </a>
               </div>
+
 
               <!-- Agregamos la tabla dentro del panel-body -->
               <table id="tbllistado_asistencia" class="table table-striped table-bordered table-condensed table-hover">
