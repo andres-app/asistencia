@@ -48,7 +48,7 @@ if (strlen(session_id()) < 1)
       <a href="escritorio.php" class="logo">
         <!-- mini logo for sidebar mini 50x50 pixels -->
         <span class="logo-mini">
-        <i class="fa fa-clock-o"></i> <!-- Icono de reloj -->
+          <i class="fa fa-clock-o"></i> <!-- Icono de reloj -->
         </span>
         <!-- logo for regular state and mobile devices -->
         <span class="logo-lg">
@@ -184,7 +184,10 @@ if (strlen(session_id()) < 1)
               </ul>
             </li>
           <?php } ?>
-          <li><a href="departamento.php"><i class="fa fa-folder"></i> <span>Areas</span></a></li>
+          <?php if ($_SESSION['tipousuario'] == 'Administrador') { ?>
+            <li><a href="departamento.php"><i class="fa fa-folder"></i> <span>Areas</span></a></li>
+          <?php } ?>
+
           <li><a href="#"><i class="fa fa-question-circle"></i> <span>Ayuda</span><small
                 class="label pull-right bg-yellow">PDF</small></a></li>
           <!-- <li><a href="https://www.appsauri.com/"><i class="fa  fa-wrench"></i> <span>Soporte</span></a> -->

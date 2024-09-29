@@ -80,7 +80,7 @@ switch ($_GET["op"]) {
 
 		while ($reg = $rspta->fetch_object()) {
 			$data[] = array(
-				"0" => '<button class="btn btn-success btn-xs"><i class="fa fa-check"></i></button>',
+				"0" => '<button class="btn btn-success btn-xs">Registrado <i class="fa fa-check"></i></button>',
 				"1" => $reg->codigo_persona,
 				"2" => $reg->nombre,
 				"3" => $reg->departamento,
