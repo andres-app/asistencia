@@ -1,4 +1,7 @@
 <?php
+// Iniciar el "output buffering" para prevenir que los warnings interfieran con el PDF
+ob_start();
+
 // Incluir la biblioteca FPDF
 require '../fpdf/fpdf.php';
 
@@ -24,8 +27,8 @@ $pdf->SetAutoPageBreak(true, 20);
 
 // Función para obtener el mes en letras
 function obtenerMesEnLetras($fecha) {
-    setlocale(LC_TIME, 'es_ES.UTF-8'); // Configurar para que sea en español
-    return strftime('%B', strtotime($fecha)); // Obtiene el mes en letras
+    setlocale(LC_TIME, 'spanish'); // Usar la localización "spanish" para Windows
+    return utf8_decode(strftime('%B', strtotime($fecha))); // Obtiene el mes en letras y lo decodifica
 }
 
 // Función para obtener todas las fechas en un rango
@@ -42,10 +45,19 @@ function generarFechas($fecha_inicio, $fecha_fin) {
     return $fechas;
 }
 
-// Función para obtener el nombre del día de la semana en español
-function obtenerDiaSemana($fecha) {
-    setlocale(LC_TIME, 'es_ES.UTF-8'); // Configurar para que sea en español
-    return strftime('%A', strtotime($fecha)); // Obtiene el día de la semana en letras
+// Función para obtener el nombre del día de la semana en español sin tildes
+function obtenerDiaSemanaSinTildes($fecha) {
+    setlocale(LC_TIME, 'spanish'); // Usar la localización "spanish" para Windows
+    $dia_semana = strftime('%A', strtotime($fecha)); // Obtiene el día de la semana en letras
+
+    // Reemplazar manualmente los días con tildes por versiones sin tildes
+    $dia_semana = str_replace(
+        ['lunes', 'martes', 'Miércoles', 'jueves', 'viernes', 'sábado', 'domingo'],
+        ['Lunes', 'Martes', 'Miercoles', 'Jueves', 'Viernes', 'Sabado', 'Domingo'],
+        strtolower($dia_semana)
+    );
+
+    return ucfirst($dia_semana); // Convertir la primera letra en mayúscula
 }
 
 // Función para calcular la diferencia en minutos entre dos horas
@@ -89,7 +101,7 @@ $pdf->SetFont('Arial', 'B', 10);
 $pdf->SetFillColor(200, 220, 255); // Color de fondo de las celdas de la cabecera
 
 // Títulos de las columnas
-$pdf->Cell(25, 10, 'Día', 1, 0, 'C', true); // Columna de día
+$pdf->Cell(25, 10, 'Dia', 1, 0, 'C', true); // Columna de día
 $pdf->Cell(25, 10, 'Fecha', 1, 0, 'C', true); // Columna de fecha
 $pdf->Cell(50, 10, 'Empleado', 1, 0, 'C', true);
 $pdf->Cell(25, 10, 'Registro', 1, 0, 'C', true);
@@ -128,10 +140,10 @@ $salida = '';
 
 // Recorrer todas las fechas y verificar si tienen registros
 foreach ($fechas as $fecha) {
-    $dia_semana = obtenerDiaSemana($fecha); // Obtener el día de la semana
+    $dia_semana = obtenerDiaSemanaSinTildes($fecha); // Obtener el día de la semana sin tildes
 
     // Calcular minutos esperados si es día laboral (lunes a viernes)
-    if (!in_array($dia_semana, ['Saturday', 'Sunday'])) {
+    if (!in_array($dia_semana, ['Sabado', 'Domingo'])) {
         $minutos_esperados = 600; // 10 horas = 600 minutos por día laboral
         $minutos_totales_esperados += $minutos_esperados;
     }
@@ -176,7 +188,7 @@ foreach ($fechas as $fecha) {
         $pdf->Cell(30, 10, '-', 1, 1, 'C', $fill);
 
         // Aumentar los minutos no marcados en un día completo (10 horas = 600 minutos)
-        if (!in_array($dia_semana, ['Saturday', 'Sunday'])) {
+        if (!in_array($dia_semana, ['Sabado', 'Domingo'])) {
             $minutos_no_marcados += 600;
         }
     }
@@ -204,4 +216,5 @@ $pdf->Cell(0, 10, 'Total de horas no marcadas: ' . $horas_no_marcadas . 'h ' . $
 
 // Salida del archivo PDF
 $pdf->Output();
+ob_end_flush(); // Finalizar el "output buffering" para generar el PDF sin errores
 ?>
