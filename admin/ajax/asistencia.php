@@ -22,6 +22,21 @@ switch ($_GET["op"]) {
 		// Obtener el nombre y apellido del usuario que realiza la modificación
 		$usuario_modificacion = $_SESSION['nombre'] . ' ' . $_SESSION['apellidos']; // Suponiendo que tienes 'nombre' y 'apellidos' en la sesión
 	
+		// Función para obtener la IP del usuario
+		function getUserIP() {
+			if (!empty($_SERVER['HTTP_CLIENT_IP'])) {
+				$ip = $_SERVER['HTTP_CLIENT_IP'];
+			} elseif (!empty($_SERVER['HTTP_X_FORWARDED_FOR'])) {
+				$ip = $_SERVER['HTTP_X_FORWARDED_FOR'];
+			} else {
+				$ip = $_SERVER['REMOTE_ADDR'];
+			}
+			return $ip;
+		}
+	
+		// Capturamos la IP del usuario
+		$ip_modificacion = getUserIP(); // Obtenemos la IP del usuario
+	
 		if (empty($idasistencia)) {
 			// Insertar nuevo registro
 			$rspta = $asistencia->insertar($codigo_persona, $fecha_hora, $tipo);
@@ -37,9 +52,9 @@ switch ($_GET["op"]) {
 	
 			// Registrar la modificación en la tabla de auditoría
 			if ($rspta) {
-				// Registrar la auditoría, incluyendo la fecha/hora original
-				$sql_auditoria = "INSERT INTO auditoria_asistencia (idasistencia, codigo_persona, fecha_hora, fecha_hora_original, tipo, motivo, fecha_modificacion, usuario_modificacion)
-								  VALUES ('$idasistencia', '$codigo_persona', '$fecha_hora', '$fecha_hora_original', '$tipo', '$motivo_modificacion', NOW(), '$usuario_modificacion')";
+				// Registrar la auditoría, incluyendo la fecha/hora original y la IP del usuario
+				$sql_auditoria = "INSERT INTO auditoria_asistencia (idasistencia, codigo_persona, fecha_hora, fecha_hora_original, tipo, motivo, fecha_modificacion, usuario_modificacion, ip_modificacion)
+								  VALUES ('$idasistencia', '$codigo_persona', '$fecha_hora', '$fecha_hora_original', '$tipo', '$motivo_modificacion', NOW(), '$usuario_modificacion', '$ip_modificacion')";
 				ejecutarConsulta($sql_auditoria);
 				echo "Registro actualizado y auditoría guardada";
 			} else {

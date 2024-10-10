@@ -182,7 +182,7 @@ function listar_asistencia() {
 }
 
 function ver(idasistencia) {
-    $.post("../ajax/asistencia.php?op=ver_detalle", { idasistencia: idasistencia }, function(data, status) {
+    $.post("../ajax/asistencia.php?op=ver_detalle", { idasistencia: idasistencia }, function (data, status) {
         data = JSON.parse(data);  // Convertimos la respuesta JSON en un objeto
 
         // Mostramos los detalles en la sección correspondiente
@@ -218,23 +218,24 @@ function ver(idasistencia) {
         }
 
         // Recorrer todas las modificaciones (auditorías) para agregar al timeline
-        auditorias.forEach(function(auditoria) {
+        auditorias.forEach(function (auditoria) {
             var fechaModificacion = auditoria.fecha_modificacion ? formatearFecha(auditoria.fecha_modificacion) : 'Fecha no disponible';
             var fechaHoraModificada = auditoria.fecha_hora ? formatearFecha(auditoria.fecha_hora) : 'Fecha no disponible';
 
             timeline += `
-                <li class="list-group-item d-flex justify-content-between align-items-center py-3"> <!-- py-3 para agregar espacio vertical -->
-                    <div class="ms-2 me-auto">
-                        <i class="fa fa-calendar"></i> <strong>Fecha Modificación:</strong> ${fechaModificacion}<br>
-                        <i class="fa fa-clock-o"></i> <strong>Fecha/Hora Modificada:</strong> ${fechaHoraModificada}<br>
-                        <i class="fa fa-check"></i> <strong>Tipo de Asistencia:</strong> ${auditoria.tipo}<br>
-                        <i class="fa fa-pencil"></i> <strong>Motivo:</strong> ${auditoria.motivo}<br>
-                        <i class="fa fa-user"></i> <strong>Modificado por:</strong> ${auditoria.usuario_modificacion}<br>
-                        <span class="badge bg-primary rounded-pill d-flex align-items-center">Modificación</span> <!-- d-flex align-items-center para centrar verticalmente -->
-                    </div>
-                    
-                </li>
-            `;
+            <li class="list-group-item d-flex justify-content-between align-items-start">
+                <div class="ms-2 me-auto">
+                    <i class="fa fa-calendar"></i> <strong>Fecha Modificación:</strong> ${fechaModificacion}<br>
+                    <i class="fa fa-clock-o"></i> <strong>Fecha/Hora Modificada:</strong> ${fechaHoraModificada}<br>
+                    <i class="fa fa-check"></i> <strong>Tipo de Asistencia:</strong> ${auditoria.tipo}<br>
+                    <i class="fa fa-pencil"></i> <strong>Motivo:</strong> ${auditoria.motivo}<br>
+                    <i class="fa fa-user"></i> <strong>Modificado por:</strong> ${auditoria.usuario_modificacion}<br>
+                    <i class="fa fa-desktop"></i> <strong>IP:</strong> ${auditoria.ip_modificacion}<br>
+                    <span class="badge bg-primary rounded-pill">Modificación</span>
+                </div>
+                
+            </li>
+        `;
         });
 
         // Insertamos el timeline generado en el contenedor
