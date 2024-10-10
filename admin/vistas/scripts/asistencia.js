@@ -70,7 +70,7 @@ function listar() {
         },
         "bDestroy": true,
         "iDisplayLength": 10, // Paginación
-        "order": [[0, "desc"]] // Ordenar por la primera columna (Fecha) en orden descendente
+        "order": [[4, "desc"]] // Ordenar por la primera columna (Fecha) en orden descendente
     }).DataTable();
 }
 
