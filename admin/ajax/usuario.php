@@ -121,39 +121,38 @@ switch ($_GET["op"]) {
 
 	case 'verificar':
 		//validar si el usuario tiene acceso al sistema
-		$logina=$_POST['logina'];
-		$clavea=$_POST['clavea'];
-
-		//Hash SHA256 en la contraseña
-		$clavehash=hash("SHA256", $clavea);
+		$logina = $_POST['logina'];
+		$clavea = $_POST['clavea'];
 	
-		$rspta=$usuario->verificar($logina, $clavehash);
-
-		$fetch=$rspta->fetch_object();
-
+		//Hash SHA256 en la contraseña
+		$clavehash = hash("SHA256", $clavea);
+		
+		$rspta = $usuario->verificar($logina, $clavehash);
+	
+		$fetch = $rspta->fetch_object();
+	
 		if (isset($fetch)) 
 		{
-			# Declaramos la variables de sesion
-			$_SESSION['idusuario']=$fetch->idusuario;
-			$id=$fetch->idusuario;
-			$_SESSION['nombre']=$fetch->nombre;
-			$_SESSION['codigo_persona']=$fetch->codigo_persona;
-			$_SESSION['imagen']=$fetch->imagen;
-			$_SESSION['login']=$fetch->login;
-			$_SESSION['tipousuario']=$fetch->tipousuario;
-			$_SESSION['departamento']=$fetch->iddepartamento;
-
+			// Declaramos las variables de sesión
+			$_SESSION['idusuario'] = $fetch->idusuario;
+			$id = $fetch->idusuario;
+			$_SESSION['nombre'] = $fetch->nombre;
+			$_SESSION['apellidos'] = $fetch->apellidos; // Agrega esta línea para guardar los apellidos
+			$_SESSION['codigo_persona'] = $fetch->codigo_persona;
+			$_SESSION['imagen'] = $fetch->imagen;
+			$_SESSION['login'] = $fetch->login;
+			$_SESSION['tipousuario'] = $fetch->tipousuario;
+			$_SESSION['departamento'] = $fetch->iddepartamento;
+	
 			require "../config/Conexion.php";
-
-			$sql="UPDATE usuarios SET iteracion='1' WHERE idusuario='$id'";
-			echo $sql; 
-	 		ejecutarConsulta($sql);	 		
-
+	
+			$sql = "UPDATE usuarios SET iteracion='1' WHERE idusuario='$id'";
+			ejecutarConsulta($sql);
 		}
-
+	
 		echo json_encode($fetch);
-
-	break;
+		break;
+	
 
 	case 'salir':
 			
