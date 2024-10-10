@@ -18,6 +18,21 @@
   <link rel="stylesheet" href="../public/css/blue.css">
   <link rel="shortcut icon" href="../public/img/favicon.ico">
 
+  <!-- Script para detectar el entorno -->
+  <script>
+    // Detectar si estamos en localhost o en producción
+    const isLocalhost = window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1";
+
+    // Definir la URL de regreso dependiendo del entorno
+    const baseURL = isLocalhost
+      ? "http://localhost/asistencia/vistas/asistencia.php" // URL en desarrollo
+      : "https://asistencia.appsauri.com/vistas/asistencia.php"; // URL en producción
+
+    // Al cargar la página, establecer el href del botón de regreso
+    document.addEventListener("DOMContentLoaded", function () {
+      document.getElementById("btnRegresar").href = baseURL;
+    });
+  </script>
 </head>
 
 <body class="hold-transition login-page">
@@ -28,8 +43,8 @@
         <i class="fa fa-clock-o"></i> <!-- Icono de reloj -->
         <b>SIASAD</b>
       </a>
-
     </div><!-- /.login-logo -->
+
     <div class="login-box-body">
       <p class="login-box-msg">Ingrese sus datos de Acceso</p>
       <form method="post" id="frmAcceso">
@@ -43,21 +58,17 @@
         </div>
         <div class="row">
           <div class="col-xs-4">
-            <!-- Botón de regreso -->
-            <!--<a href="https://asistencia.appsauri.com/vistas/asistencia.php" class="btn bg-red btn-block btn-flat">-->
-              <a href="http://localhost/asistencia/vistas/asistencia.php" class="btn bg-red btn-block btn-flat">
+            <!-- Botón de regreso con URL dinámica -->
+            <a id="btnRegresar" class="btn bg-red btn-block btn-flat">
               <i class="fa fa-arrow-left"></i> Regresar
             </a>
           </div><!-- /.col -->
+          <div class="col-xs-4"></div>
           <div class="col-xs-4">
-            <!--El espaciado de 4 blockes del medio-->
-          </div>
-          <div class="col-xs-4">
-            <button type="submit" class="btn bg-purple btn-block btn-flat"> Ingresar</button>
+            <button type="submit" class="btn bg-purple btn-block btn-flat">Ingresar</button>
           </div><!-- /.col -->
         </div>
       </form>
-
     </div><!-- /.login-box-body -->
   </div><!-- /.login-box -->
 
@@ -67,9 +78,7 @@
   <script src="../public/js/bootstrap.min.js"></script>
   <!-- Bootbox -->
   <script src="../public/js/bootbox.min.js"></script>
-
   <script type="text/javascript" src="scripts/login.js"></script>
-
 
 </body>
 
