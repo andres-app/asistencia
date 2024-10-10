@@ -207,7 +207,8 @@ function ver(idasistencia) {
                         <div class="fw-bold">Fecha Modificación: ${auditoria.fecha_modificacion}</div>
                         Fecha/Hora Modificada: ${auditoria.fecha_hora}<br>
                         Tipo de Asistencia: ${auditoria.tipo}<br>
-                        Motivo: ${auditoria.motivo}
+                        Motivo: ${auditoria.motivo}<br>
+                        <strong>Modificado por:</strong> ${auditoria.usuario_modificacion}
                     </div>
                 </li>
             `;
@@ -221,6 +222,10 @@ function ver(idasistencia) {
         $("#listadoregistros").hide();
     });
 }
+
+
+
+
 
 
 
