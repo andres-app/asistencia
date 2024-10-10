@@ -16,10 +16,10 @@ function init() {
         var todosOption = '<option value="">Todos</option>';
         $("#idcliente").html(todosOption + r); // Concatenar la opción "Todos" con los demás resultados
         $('#idcliente').selectpicker('refresh'); // Refrescar el selectpicker para actualizar
-    }).fail(function(e) {
+    }).fail(function (e) {
         console.log("Error al cargar empleados: ", e.responseText); // Mostrar error en consola si la solicitud falla
     });
-    
+
 }
 
 // Función para limpiar el formulario
@@ -185,6 +185,18 @@ function ver(idasistencia) {
     $.post("../ajax/asistencia.php?op=ver_detalle", { idasistencia: idasistencia }, function(data, status) {
         data = JSON.parse(data);  // Convertimos la respuesta JSON en un objeto
 
+        // Función para formatear fechas y horas en DD/MM/AAAA | HH:MM:SS
+        function formatFechaHora(fecha) {
+            const date = new Date(fecha);
+            const day = ("0" + date.getDate()).slice(-2);
+            const month = ("0" + (date.getMonth() + 1)).slice(-2); // Los meses en JavaScript van de 0 a 11
+            const year = date.getFullYear();
+            const hours = ("0" + date.getHours()).slice(-2);
+            const minutes = ("0" + date.getMinutes()).slice(-2);
+            const seconds = ("0" + date.getSeconds()).slice(-2);
+            return `${day}/${month}/${year} | ${hours}:${minutes}:${seconds}`;
+        }
+
         // Mostramos los detalles en la sección correspondiente
         var asistencia = data.asistencia;
         var auditorias = data.auditorias;
@@ -194,7 +206,7 @@ function ver(idasistencia) {
         $("#codigo_persona_detalle").val(asistencia.codigo_persona);
         $("#nombre_detalle").val(asistencia.nombre + " " + asistencia.apellidos);
         $("#tipo_detalle").val(asistencia.tipo);
-        $("#fecha_hora_detalle").val(asistencia.fecha_hora);
+        $("#fecha_hora_detalle").val(formatFechaHora(asistencia.fecha_hora));
 
         // Generamos el timeline dinámicamente
         var timeline = '';
@@ -204,11 +216,13 @@ function ver(idasistencia) {
             timeline += `
                 <li class="list-group-item d-flex justify-content-between align-items-start">
                     <div class="ms-2 me-auto">
-                        <div class="fw-bold">Fecha Modificación: ${auditoria.fecha_modificacion}</div>
-                        Fecha/Hora Modificada: ${auditoria.fecha_hora}<br>
-                        Tipo de Asistencia: ${auditoria.tipo}<br>
-                        Motivo: ${auditoria.motivo}<br>
-                        <strong>Modificado por:</strong> ${auditoria.usuario_modificacion}
+                        <div class="fw-bold">
+                            <i class="fa fa-calendar"></i> Fecha de Modificación: ${formatFechaHora(auditoria.fecha_modificacion)}
+                        </div>
+                        <i class="fa fa-clock-o"></i> Fecha/Hora Modificada: ${formatFechaHora(auditoria.fecha_hora)}<br>
+                        <i class="fa fa-check"></i> Tipo de Asistencia: ${auditoria.tipo}<br>
+                        <i class="fa fa-pencil"></i> Motivo: ${auditoria.motivo}<br>
+                        <i class="fa fa-user"></i> <strong>Modificado por:</strong> ${auditoria.usuario_modificacion}
                     </div>
                 </li>
             `;
@@ -222,12 +236,6 @@ function ver(idasistencia) {
         $("#listadoregistros").hide();
     });
 }
-
-
-
-
-
-
 
 // Función para ocultar la sección de detalles y volver al listado
 function cancelarDetalle() {
