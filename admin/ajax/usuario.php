@@ -81,32 +81,42 @@ switch ($_GET["op"]) {
 	break;
 	
 	case 'listar':
-		$rspta=$usuario->listar();
-		//declaramos un array
-		$data=Array();
-
-
-		while ($reg=$rspta->fetch_object()) {
-			$data[]=array(
-				"0"=>($reg->estado)?'<button class="btn btn-warning btn-xs" onclick="mostrar('.$reg->idusuario.')"><i class="fa fa-pencil"></i></button>'.' '.'<button class="btn btn-info btn-xs" onclick="mostrar_clave('.$reg->idusuario.')"><i class="fa fa-key"></i></button>'.' '.'<button class="btn btn-danger btn-xs" onclick="desactivar('.$reg->idusuario.')"><i class="fa fa-close"></i></button>':'<button class="btn btn-warning btn-xs" onclick="mostrar('.$reg->idusuario.')"><i class="fa fa-pencil"></i></button>'.' '.'<button class="btn btn-info btn-xs" onclick="mostrar_clave('.$reg->idusuario.')"><i class="fa fa-key"></i></button>'.' '.'<button class="btn btn-primary btn-xs" onclick="activar('.$reg->idusuario.')"><i class="fa fa-check"></i></button>',
-				"1"=>$reg->nombre,
-				"2"=>$reg->apellidos,
-				"3"=>$reg->login,
-				"4"=>$reg->email,
-				"5"=>"<img src='../files/usuarios/".$reg->imagen."' height='50px' width='50px'>",
-				"6"=>$reg->fechacreado,
-				"7"=>($reg->estado)?'<span class="label bg-green">Activado</span>':'<span class="label bg-red">Desactivado</span>'
-				);
+		$rspta = $usuario->listar();
+		// declaramos un array
+		$data = Array();
+	
+		while ($reg = $rspta->fetch_object()) {
+			$idusuario = isset($reg->idusuario) ? $reg->idusuario : 'ID no disponible';
+			$nombre = isset($reg->nombre) ? $reg->nombre : 'Nombre no disponible';
+			$apellidos = isset($reg->apellidos) ? $reg->apellidos : 'Apellidos no disponibles';
+			$login = isset($reg->login) ? $reg->login : 'Login no disponible';
+			$email = isset($reg->email) ? $reg->email : 'Email no disponible';
+			$imagen = isset($reg->imagen) ? "<img src='../files/usuarios/".$reg->imagen."' height='50px' width='50px'>" : 'Imagen no disponible';
+			$fechacreado = isset($reg->fechacreado) ? $reg->fechacreado : 'Fecha no disponible';
+			$estado = isset($reg->estado) ? $reg->estado : null;
+	
+			$data[] = array(
+				"0" => ($estado) ? '<button class="btn btn-warning btn-xs" onclick="mostrar('.$idusuario.')"><i class="fa fa-pencil"></i></button>'.' '.'<button class="btn btn-info btn-xs" onclick="mostrar_clave('.$idusuario.')"><i class="fa fa-key"></i></button>'.' '.'<button class="btn btn-danger btn-xs" onclick="desactivar('.$idusuario.')"><i class="fa fa-close"></i></button>' : '<button class="btn btn-warning btn-xs" onclick="mostrar('.$idusuario.')"><i class="fa fa-pencil"></i></button>'.' '.'<button class="btn btn-info btn-xs" onclick="mostrar_clave('.$idusuario.')"><i class="fa fa-key"></i></button>'.' '.'<button class="btn btn-primary btn-xs" onclick="activar('.$idusuario.')"><i class="fa fa-check"></i></button>',
+				"1" => $nombre,
+				"2" => $apellidos,
+				"3" => $login,
+				"4" => $email,
+				"5" => $imagen,
+				"6" => $fechacreado,
+				"7" => ($estado) ? '<span class="label bg-green">Activado</span>' : '<span class="label bg-red">Desactivado</span>'
+			);
 		}
-
-		$results=array(
-             "sEcho"=>1,//info para datatables
-             "iTotalRecords"=>count($data),//enviamos el total de registros al datatable
-             "iTotalDisplayRecords"=>count($data),//enviamos el total de registros a visualizar
-             "aaData"=>$data); 
+	
+		$results = array(
+			"sEcho" => 1, // info para datatables
+			"iTotalRecords" => count($data), // enviamos el total de registros al datatable
+			"iTotalDisplayRecords" => count($data), // enviamos el total de registros a visualizar
+			"aaData" => $data
+		);
 		echo json_encode($results);
-
+	
 	break;
+	
 
 
 	case 'verificar':

@@ -52,12 +52,12 @@ function obtenerDiaSemanaSinTildes($fecha) {
 
     // Reemplazar manualmente los días con tildes por versiones sin tildes
     $dia_semana = str_replace(
-        ['lunes', 'martes', 'Miércoles', 'jueves', 'viernes', 'sábado', 'domingo'],
+        ['lunes', 'martes', 'miércoles', 'jueves', 'viernes', 'sábado', 'domingo'],
         ['Lunes', 'Martes', 'Miercoles', 'Jueves', 'Viernes', 'Sabado', 'Domingo'],
         strtolower($dia_semana)
     );
 
-    return ucfirst($dia_semana); // Convertir la primera letra en mayúscula
+    return utf8_decode(ucfirst($dia_semana)); // Convertir a ISO-8859-1 y primera letra en mayúscula
 }
 
 // Función para calcular la diferencia en minutos entre dos horas
@@ -178,11 +178,12 @@ foreach ($fechas as $fecha) {
             $minutos_laborados += calcularDiferenciaMinutos($entrada, $salida);
         }
     } else {
-        // Si no hay registro para esta fecha, mostrar "No registro"
+        // Mostrar "--" en los días sábado y domingo en lugar de "No registro"
         $fecha_formateada = date('d-m-Y', strtotime($fecha));
+        $registro_texto = (!in_array($dia_semana, ['Sabado', 'Domingo'])) ? 'No registro' : '--';
         $pdf->Cell(25, 10, utf8_decode(ucfirst($dia_semana)), 1, 0, 'C', $fill); // Día de la semana
         $pdf->Cell(25, 10, utf8_decode($fecha_formateada), 1, 0, 'C', $fill); // Fecha en formato DD-MM-YYYY
-        $pdf->Cell(50, 10, 'No registro', 1, 0, 'C', $fill); // Empleado "No registro"
+        $pdf->Cell(50, 10, $registro_texto, 1, 0, 'C', $fill); // Empleado "--" o "No registro"
         $pdf->Cell(25, 10, '-', 1, 0, 'C', $fill); // Tipo vacío
         $pdf->Cell(30, 10, '-', 1, 0, 'C', $fill); // Hora vacía
         $pdf->Cell(30, 10, '-', 1, 1, 'C', $fill);

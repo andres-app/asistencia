@@ -50,10 +50,10 @@ class Usuario {
 
     //listar registros
     public function listar() {
-        // Asegúrate de que esta consulta esté funcionando correctamente
-        $sql = "SELECT codigo_persona, nombre, apellidos FROM usuarios";
+        $sql = "SELECT idusuario, nombre, apellidos, login, email, imagen, fechacreado, estado FROM usuarios";
         return ejecutarConsulta($sql);
     }
+    
 
     //cantidad total de usuarios
     public function cantidad_usuario() {
