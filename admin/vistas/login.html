@@ -28,8 +28,8 @@
         <i class="fa fa-clock-o"></i> <!-- Icono de reloj -->
         <b>SIASAD</b>
       </a>
-
     </div><!-- /.login-logo -->
+
     <div class="login-box-body">
       <p class="login-box-msg">Ingrese sus datos de Acceso</p>
       <form method="post" id="frmAcceso">
@@ -43,21 +43,17 @@
         </div>
         <div class="row">
           <div class="col-xs-4">
-            <!-- Botón de regreso -->
-            <a href="https://asistencia.appsauri.com/vistas/asistencia.php" class="btn bg-red btn-block btn-flat">
-              <!-- <a href="http://localhost/asistencia/vistas/asistencia.php" class="btn bg-red btn-block btn-flat"> -->
+            <!-- Botón de regreso que utiliza JavaScript para volver a la página anterior -->
+            <button type="button" class="btn bg-red btn-block btn-flat" onclick="history.back()">
               <i class="fa fa-arrow-left"></i> Regresar
-            </a>
+            </button>
           </div><!-- /.col -->
-          <div class="col-xs-4">
-            <!--El espaciado de 4 blockes del medio-->
-          </div>
+          <div class="col-xs-4"></div>
           <div class="col-xs-4">
             <button type="submit" class="btn bg-purple btn-block btn-flat"> Ingresar</button>
           </div><!-- /.col -->
         </div>
       </form>
-
     </div><!-- /.login-box-body -->
   </div><!-- /.login-box -->
 
@@ -67,9 +63,7 @@
   <script src="../public/js/bootstrap.min.js"></script>
   <!-- Bootbox -->
   <script src="../public/js/bootbox.min.js"></script>
-
   <script type="text/javascript" src="scripts/login.js"></script>
-
 
 </body>
 
