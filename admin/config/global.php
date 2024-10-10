@@ -1,43 +1,46 @@
 <?php
 
-//===AMBIENTE DE DESARROLLO===
-//ip de la pc servidor base de datos
-define("DB_HOST", "localhost");
+// Detectar si estamos en un entorno de desarrollo o producción
+if ($_SERVER['SERVER_NAME'] === 'localhost' || $_SERVER['SERVER_NAME'] === '127.0.0.1') {
+    // === AMBIENTE DE DESARROLLO ===
+    
+    // ip de la pc servidor base de datos
+    define("DB_HOST", "localhost");
 
-// nombre de la base de datos
-define("DB_NAME", "control_asistencia");
+    // nombre de la base de datos
+    define("DB_NAME", "control_asistencia");
 
+    // nombre de usuario de base de datos
+    define("DB_USERNAME", "root");
 
-//nombre de usuario de base de datos
-define("DB_USERNAME", "root");
+    // contraseña del usuario de base de datos
+    define("DB_PASSWORD", "");
 
-//conraseña del usuario de base de datos
-define("DB_PASSWORD", "");
+    // codificación de caracteres
+    define("DB_ENCODE", "utf8");
 
-//codificacion de caracteres
-define("DB_ENCODE", "utf8");
+    // nombre del proyecto
+    define("PRO_NOMBRE", "Appsauri");
+} else {
+    // === AMBIENTE DE PRODUCCIÓN ===
+    
+    // ip o dominio del servidor de base de datos
+    define("DB_HOST", "localhost");  // Cambia si el host en producción es diferente
 
-//nombre del proyecto
-define("PRO_NOMBRE", "Appsauri");
+    // nombre de la base de datos
+    define("DB_NAME", "u274409976_asistencia");
 
+    // nombre de usuario de base de datos
+    define("DB_USERNAME", "u274409976_asistencia");
 
+    // contraseña del usuario de base de datos
+    define("DB_PASSWORD", "Redes2804751$$$");
 
-//===AMBIENTE DE PRODUCCION===
-//ip de la pc servidor base de datos PROD
-//define("DB_HOST", "localhost");
+    // codificación de caracteres
+    define("DB_ENCODE", "utf8");
 
-// nombre de la base de datos PROD
-//define("DB_NAME", "u274409976_asistencia");
+    // nombre del proyecto
+    define("PRO_NOMBRE", "Appsauri_Produccion");
+}
 
-//nombre de usuario de base de datos PROD
-//define("DB_USERNAME", "u274409976_asistencia");
-
-//conraseña del usuario de base de datos PROD
-//efine("DB_PASSWORD", "Asistencia23$$$");
-
-//codificacion de caracteres PROD
-//define("DB_ENCODE", "utf8");
-
-//nombre del proyecto
-//define("PRO_NOMBRE", "Appsauri");
- ?>
+?>
