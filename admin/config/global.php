@@ -1,5 +1,8 @@
 <?php
 
+date_default_timezone_set('America/Lima'); // Ajusta a tu zona horaria
+
+
 // Detectar si estamos en un entorno de desarrollo o producción
 if ($_SERVER['SERVER_NAME'] === 'localhost' || $_SERVER['SERVER_NAME'] === '127.0.0.1') {
     // === AMBIENTE DE DESARROLLO ===
