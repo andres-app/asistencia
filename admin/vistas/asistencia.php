@@ -124,7 +124,7 @@ if (!isset($_SESSION['nombre'])) {
 
                                     <div class="form-group col-lg-12 col-md-12 col-sm-12 col-xs-12 text-center">
                                         <button class="btn btn-danger" onclick="cancelarDetalle()" type="button"><i
-                                                class="fa fa-arrow-circle-left"></i> Cerrar</button>
+                                                class="fa fa-arrow-circle-left"></i> Regresar</button>
                                     </div>
                                 </div>
                             </form>

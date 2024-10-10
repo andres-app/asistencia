@@ -214,14 +214,6 @@ switch ($_GET["op"]) {
 			// Devolvemos los detalles de la asistencia y el historial de modificaciones
 			echo json_encode(array("asistencia" => $rspta_asistencia, "auditorias" => $auditorias));
 			break;
-		
-		
-		
-
-
-
-
-
 }
 
 ?>

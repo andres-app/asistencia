@@ -205,13 +205,14 @@ function ver(idasistencia) {
             var fechaOriginal = primerAuditoria.fecha_hora_original ? formatearFecha(primerAuditoria.fecha_hora_original) : 'Fecha no disponible';
 
             timeline += `
-                <li class="list-group-item d-flex justify-content-between align-items-start">
+                <li class="list-group-item d-flex justify-content-between align-items-center py-3"> <!-- py-3 para agregar espacio vertical -->
                     <div class="ms-2 me-auto">
                         <i class="fa fa-calendar"></i> <strong>Registro Original</strong><br>
                         <i class="fa fa-clock-o"></i> <strong>Fecha/Hora Original:</strong> ${fechaOriginal}<br>
                         <i class="fa fa-check"></i> <strong>Tipo de Asistencia:</strong> ${primerAuditoria.tipo}<br>
+                        <span class="badge bg-success rounded-pill d-flex align-items-center">Original</span> <!-- d-flex align-items-center para centrar verticalmente -->
                     </div>
-                    <span class="badge bg-secondary rounded-pill">Original</span>
+                    
                 </li>
             `;
         }
@@ -222,15 +223,16 @@ function ver(idasistencia) {
             var fechaHoraModificada = auditoria.fecha_hora ? formatearFecha(auditoria.fecha_hora) : 'Fecha no disponible';
 
             timeline += `
-                <li class="list-group-item d-flex justify-content-between align-items-start">
+                <li class="list-group-item d-flex justify-content-between align-items-center py-3"> <!-- py-3 para agregar espacio vertical -->
                     <div class="ms-2 me-auto">
                         <i class="fa fa-calendar"></i> <strong>Fecha Modificación:</strong> ${fechaModificacion}<br>
                         <i class="fa fa-clock-o"></i> <strong>Fecha/Hora Modificada:</strong> ${fechaHoraModificada}<br>
                         <i class="fa fa-check"></i> <strong>Tipo de Asistencia:</strong> ${auditoria.tipo}<br>
                         <i class="fa fa-pencil"></i> <strong>Motivo:</strong> ${auditoria.motivo}<br>
-                        <i class="fa fa-user"></i> <strong>Modificado por:</strong> ${auditoria.usuario_modificacion}
+                        <i class="fa fa-user"></i> <strong>Modificado por:</strong> ${auditoria.usuario_modificacion}<br>
+                        <span class="badge bg-primary rounded-pill d-flex align-items-center">Modificación</span> <!-- d-flex align-items-center para centrar verticalmente -->
                     </div>
-                    <span class="badge bg-primary rounded-pill">Modificación</span>
+                    
                 </li>
             `;
         });
@@ -243,6 +245,7 @@ function ver(idasistencia) {
         $("#listadoregistros").hide();
     });
 }
+
 
 // Función para formatear la fecha en DD/MM/AAAA | HH:MM:SS
 function formatearFecha(fecha) {
