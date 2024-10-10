@@ -18,22 +18,28 @@ switch ($_GET["op"]) {
 		$fecha_hora = limpiarCadena($_POST["fecha_hora"]);
 		$tipo = limpiarCadena($_POST["tipo"]);
 		$motivo_modificacion = isset($_POST["motivo_modificacion"]) ? limpiarCadena($_POST["motivo_modificacion"]) : "";
-
-		// Obtener el nombre o ID del usuario que realiza la modificación
-		$usuario_modificacion = $_SESSION['nombre']; // Suponiendo que guardas el nombre en la sesión
-
+	
+		// Obtener el nombre y apellido del usuario que realiza la modificación
+		$usuario_modificacion = $_SESSION['nombre'] . ' ' . $_SESSION['apellidos']; // Suponiendo que tienes 'nombre' y 'apellidos' en la sesión
+	
 		if (empty($idasistencia)) {
 			// Insertar nuevo registro
 			$rspta = $asistencia->insertar($codigo_persona, $fecha_hora, $tipo);
 			echo $rspta ? "Registro guardado" : "No se pudo registrar";
 		} else {
-			// Editar registro existente
+			// Obtener la fecha/hora original antes de sobrescribirla
+			$sql_asistencia = "SELECT fecha_hora FROM asistencia WHERE idasistencia = '$idasistencia'";
+			$rspta_asistencia = ejecutarConsultaSimpleFila($sql_asistencia);
+			$fecha_hora_original = $rspta_asistencia['fecha_hora']; // Guardamos la fecha original
+	
+			// Editar registro existente (actualizar la asistencia)
 			$rspta = $asistencia->editar($idasistencia, $codigo_persona, $fecha_hora, $tipo);
-
+	
 			// Registrar la modificación en la tabla de auditoría
 			if ($rspta) {
-				$sql_auditoria = "INSERT INTO auditoria_asistencia (idasistencia, codigo_persona, fecha_hora, tipo, motivo, fecha_modificacion, usuario_modificacion)
-								  VALUES ('$idasistencia', '$codigo_persona', '$fecha_hora', '$tipo', '$motivo_modificacion', NOW(), '$usuario_modificacion')";
+				// Registrar la auditoría, incluyendo la fecha/hora original
+				$sql_auditoria = "INSERT INTO auditoria_asistencia (idasistencia, codigo_persona, fecha_hora, fecha_hora_original, tipo, motivo, fecha_modificacion, usuario_modificacion)
+								  VALUES ('$idasistencia', '$codigo_persona', '$fecha_hora', '$fecha_hora_original', '$tipo', '$motivo_modificacion', NOW(), '$usuario_modificacion')";
 				ejecutarConsulta($sql_auditoria);
 				echo "Registro actualizado y auditoría guardada";
 			} else {
@@ -41,6 +47,8 @@ switch ($_GET["op"]) {
 			}
 		}
 		break;
+	
+	
 
 	// Caso para obtener un registro específico para editar
 	case 'mostrar':
@@ -190,8 +198,8 @@ switch ($_GET["op"]) {
 					WHERE a.idasistencia = '$idasistencia'";
 			$rspta_asistencia = ejecutarConsultaSimpleFila($sql);
 		
-			// Consulta para obtener todas las modificaciones desde la auditoría, incluyendo el usuario que modificó
-			$sql_auditoria = "SELECT idauditoria, idasistencia, fecha_hora, tipo, motivo, fecha_modificacion, usuario_modificacion
+			// Consulta para obtener todas las modificaciones desde la auditoría, incluyendo el usuario que modificó y la fecha/hora original
+			$sql_auditoria = "SELECT idauditoria, idasistencia, fecha_hora, fecha_hora_original, tipo, motivo, fecha_modificacion, usuario_modificacion
 							  FROM auditoria_asistencia
 							  WHERE idasistencia = '$idasistencia'
 							  ORDER BY fecha_modificacion DESC";
@@ -206,6 +214,7 @@ switch ($_GET["op"]) {
 			// Devolvemos los detalles de la asistencia y el historial de modificaciones
 			echo json_encode(array("asistencia" => $rspta_asistencia, "auditorias" => $auditorias));
 			break;
+		
 		
 		
 

@@ -185,18 +185,6 @@ function ver(idasistencia) {
     $.post("../ajax/asistencia.php?op=ver_detalle", { idasistencia: idasistencia }, function(data, status) {
         data = JSON.parse(data);  // Convertimos la respuesta JSON en un objeto
 
-        // Función para formatear fechas y horas en DD/MM/AAAA | HH:MM:SS
-        function formatFechaHora(fecha) {
-            const date = new Date(fecha);
-            const day = ("0" + date.getDate()).slice(-2);
-            const month = ("0" + (date.getMonth() + 1)).slice(-2); // Los meses en JavaScript van de 0 a 11
-            const year = date.getFullYear();
-            const hours = ("0" + date.getHours()).slice(-2);
-            const minutes = ("0" + date.getMinutes()).slice(-2);
-            const seconds = ("0" + date.getSeconds()).slice(-2);
-            return `${day}/${month}/${year} | ${hours}:${minutes}:${seconds}`;
-        }
-
         // Mostramos los detalles en la sección correspondiente
         var asistencia = data.asistencia;
         var auditorias = data.auditorias;
@@ -206,24 +194,43 @@ function ver(idasistencia) {
         $("#codigo_persona_detalle").val(asistencia.codigo_persona);
         $("#nombre_detalle").val(asistencia.nombre + " " + asistencia.apellidos);
         $("#tipo_detalle").val(asistencia.tipo);
-        $("#fecha_hora_detalle").val(formatFechaHora(asistencia.fecha_hora));
+        $("#fecha_hora_detalle").val(formatearFecha(asistencia.fecha_hora));
 
         // Generamos el timeline dinámicamente
         var timeline = '';
 
-        // Recorrer todas las modificaciones (auditorías) para agregar al timeline
-        auditorias.forEach(function(auditoria) {
+        // Verificamos si hay auditoría y mostramos el registro original basado en la primera entrada de auditoría
+        if (auditorias.length > 0) {
+            var primerAuditoria = auditorias[auditorias.length - 1];  // Primer registro de la auditoría (el más antiguo)
+            var fechaOriginal = primerAuditoria.fecha_hora_original ? formatearFecha(primerAuditoria.fecha_hora_original) : 'Fecha no disponible';
+
             timeline += `
                 <li class="list-group-item d-flex justify-content-between align-items-start">
                     <div class="ms-2 me-auto">
-                        <div class="fw-bold">
-                            <i class="fa fa-calendar"></i> Fecha de Modificación: ${formatFechaHora(auditoria.fecha_modificacion)}
-                        </div>
-                        <i class="fa fa-clock-o"></i> Fecha/Hora Modificada: ${formatFechaHora(auditoria.fecha_hora)}<br>
-                        <i class="fa fa-check"></i> Tipo de Asistencia: ${auditoria.tipo}<br>
-                        <i class="fa fa-pencil"></i> Motivo: ${auditoria.motivo}<br>
+                        <i class="fa fa-calendar"></i> <strong>Registro Original</strong><br>
+                        <i class="fa fa-clock-o"></i> <strong>Fecha/Hora Original:</strong> ${fechaOriginal}<br>
+                        <i class="fa fa-check"></i> <strong>Tipo de Asistencia:</strong> ${primerAuditoria.tipo}<br>
+                    </div>
+                    <span class="badge bg-secondary rounded-pill">Original</span>
+                </li>
+            `;
+        }
+
+        // Recorrer todas las modificaciones (auditorías) para agregar al timeline
+        auditorias.forEach(function(auditoria) {
+            var fechaModificacion = auditoria.fecha_modificacion ? formatearFecha(auditoria.fecha_modificacion) : 'Fecha no disponible';
+            var fechaHoraModificada = auditoria.fecha_hora ? formatearFecha(auditoria.fecha_hora) : 'Fecha no disponible';
+
+            timeline += `
+                <li class="list-group-item d-flex justify-content-between align-items-start">
+                    <div class="ms-2 me-auto">
+                        <i class="fa fa-calendar"></i> <strong>Fecha Modificación:</strong> ${fechaModificacion}<br>
+                        <i class="fa fa-clock-o"></i> <strong>Fecha/Hora Modificada:</strong> ${fechaHoraModificada}<br>
+                        <i class="fa fa-check"></i> <strong>Tipo de Asistencia:</strong> ${auditoria.tipo}<br>
+                        <i class="fa fa-pencil"></i> <strong>Motivo:</strong> ${auditoria.motivo}<br>
                         <i class="fa fa-user"></i> <strong>Modificado por:</strong> ${auditoria.usuario_modificacion}
                     </div>
+                    <span class="badge bg-primary rounded-pill">Modificación</span>
                 </li>
             `;
         });
@@ -236,6 +243,23 @@ function ver(idasistencia) {
         $("#listadoregistros").hide();
     });
 }
+
+// Función para formatear la fecha en DD/MM/AAAA | HH:MM:SS
+function formatearFecha(fecha) {
+    if (!fecha || fecha === '0000-00-00 00:00:00') return 'Fecha no disponible';  // Verifica si es una fecha válida
+    var date = new Date(fecha);
+    var dia = ("0" + date.getDate()).slice(-2);
+    var mes = ("0" + (date.getMonth() + 1)).slice(-2);
+    var anio = date.getFullYear();
+    var horas = ("0" + date.getHours()).slice(-2);
+    var minutos = ("0" + date.getMinutes()).slice(-2);
+    var segundos = ("0" + date.getSeconds()).slice(-2);
+
+    return `${dia}/${mes}/${anio} | ${horas}:${minutos}:${segundos}`;
+}
+
+
+
 
 // Función para ocultar la sección de detalles y volver al listado
 function cancelarDetalle() {
