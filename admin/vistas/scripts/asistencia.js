@@ -181,6 +181,57 @@ function listar_asistencia() {
     }).DataTable();
 }
 
+function ver(idasistencia) {
+    $.post("../ajax/asistencia.php?op=ver_detalle", { idasistencia: idasistencia }, function(data, status) {
+        data = JSON.parse(data);  // Convertimos la respuesta JSON en un objeto
+
+        // Mostramos los detalles en la sección correspondiente
+        var asistencia = data.asistencia;
+        var auditorias = data.auditorias;
+
+        // Llenamos los campos con los detalles del registro de asistencia
+        $("#idasistencia_detalle").val(asistencia.idasistencia);
+        $("#codigo_persona_detalle").val(asistencia.codigo_persona);
+        $("#nombre_detalle").val(asistencia.nombre + " " + asistencia.apellidos);
+        $("#tipo_detalle").val(asistencia.tipo);
+        $("#fecha_hora_detalle").val(asistencia.fecha_hora);
+
+        // Generamos el timeline dinámicamente
+        var timeline = '';
+
+        // Recorrer todas las modificaciones (auditorías) para agregar al timeline
+        auditorias.forEach(function(auditoria) {
+            timeline += `
+                <li class="list-group-item d-flex justify-content-between align-items-start">
+                    <div class="ms-2 me-auto">
+                        <div class="fw-bold">Fecha Modificación: ${auditoria.fecha_modificacion}</div>
+                        Fecha/Hora Modificada: ${auditoria.fecha_hora}<br>
+                        Tipo de Asistencia: ${auditoria.tipo}<br>
+                        Motivo: ${auditoria.motivo}
+                    </div>
+                </li>
+            `;
+        });
+
+        // Insertamos el timeline generado en el contenedor
+        $("#timeline_detalle").html(timeline);
+
+        // Mostramos el formulario de detalles y ocultamos el listado de registros
+        $("#detalleasistencia").show();
+        $("#listadoregistros").hide();
+    });
+}
+
+
+
+// Función para ocultar la sección de detalles y volver al listado
+function cancelarDetalle() {
+    $("#detalleasistencia").hide();
+    $("#listadoregistros").show();
+}
+
+
+
 function listar_asistenciau() {
     var fecha_inicio = $("#fecha_inicio").val();
     var fecha_fin = $("#fecha_fin").val();

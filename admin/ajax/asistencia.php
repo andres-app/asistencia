@@ -52,7 +52,8 @@ switch ($_GET["op"]) {
 
 		while ($reg = $rspta->fetch_object()) {
 			$data[] = array(
-				"0" => '<button class="btn btn-warning" onclick="mostrar(' . $reg->idasistencia . ')"><i class="fa fa-pencil"></i></button>',
+				"0" => '<button class="btn btn-warning btn-xs" onclick="mostrar(' . $reg->idasistencia . ')"><i class="fa fa-pencil"></i></button>' .
+					' <button class="btn btn-info btn-xs" onclick="ver(' . $reg->idasistencia . ')"><i class="fa fa-eye"></i></button>',
 				"1" => $reg->codigo_persona,
 				"2" => $reg->nombre . ' ' . $reg->apellidos,
 				"3" => $reg->departamento,
@@ -164,18 +165,47 @@ switch ($_GET["op"]) {
 		break;
 
 
-		case 'selectPersona':
-			require_once "../modelos/Usuario.php";
-			$usuario = new Usuario();
+	case 'selectPersona':
+		require_once "../modelos/Usuario.php";
+		$usuario = new Usuario();
+
+		$rspta = $usuario->listar();
+
+		while ($reg = $rspta->fetch_object()) {
+			print_r($reg); // Esto te permitirá ver si los datos están siendo obtenidos correctamente
+			echo '<option value=' . $reg->codigo_persona . '>' . $reg->nombre . ' ' . $reg->apellidos . '</option>';
+		}
+		break;
+
+		case 'ver_detalle':
+			$idasistencia = isset($_POST["idasistencia"]) ? limpiarCadena($_POST["idasistencia"]) : "";
 		
-			$rspta = $usuario->listar();
-			
-			while ($reg = $rspta->fetch_object()) {
-				print_r($reg); // Esto te permitirá ver si los datos están siendo obtenidos correctamente
-				echo '<option value=' . $reg->codigo_persona . '>' . $reg->nombre . ' ' . $reg->apellidos . '</option>';
+			// Consulta para obtener la información del marcado inicial
+			$sql = "SELECT a.idasistencia, a.codigo_persona, a.fecha_hora, a.tipo, u.nombre, u.apellidos
+					FROM asistencia a
+					INNER JOIN usuarios u ON a.codigo_persona = u.codigo_persona
+					WHERE a.idasistencia = '$idasistencia'";
+			$rspta_asistencia = ejecutarConsultaSimpleFila($sql);
+		
+			// Consulta para obtener todas las modificaciones desde la auditoría
+			$sql_auditoria = "SELECT idauditoria, idasistencia, fecha_hora, tipo, motivo, fecha_modificacion
+							  FROM auditoria_asistencia
+							  WHERE idasistencia = '$idasistencia'
+							  ORDER BY fecha_modificacion DESC";
+			$rspta_auditoria = ejecutarConsulta($sql_auditoria);
+		
+			// Formamos un array con los resultados
+			$auditorias = array();
+			while ($row = $rspta_auditoria->fetch_object()) {
+				$auditorias[] = $row;
 			}
+		
+			// Devolvemos los detalles de la asistencia y el historial de modificaciones
+			echo json_encode(array("asistencia" => $rspta_asistencia, "auditorias" => $auditorias));
 			break;
 		
 
+
 }
+
 ?>
